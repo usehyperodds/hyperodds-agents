@@ -1,0 +1,49 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: publish to npm with provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: the tag matches every package
+        run: |
+          for p in client ai-sdk langchain openai-agents; do
+            test "v$(node -p "require('./packages/$p/package.json').version")" = "$GITHUB_REF_NAME"
+          done
+          for p in ai-sdk langchain openai-agents; do
+            test "v$(node -p "require('./packages/$p/package.json').dependencies['@hyperodds/client']")" = "$GITHUB_REF_NAME"
+          done
+      # The framework packages depend on the client, so it goes first.
+      - run: |
+          for p in client ai-sdk langchain openai-agents; do
+            npm publish --workspace "packages/$p" --provenance --access public
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: GitHub release from the changelog entry
+        run: |
+          awk '/^## \[/{n++} n==1' CHANGELOG.md | tail -n +2 > notes.md
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+        env:
+          GH_TOKEN: ${{ github.token }}

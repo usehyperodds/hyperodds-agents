@@ -1,0 +1,31 @@
+name: Bug report
+description: A package did something wrong or did not work with a framework.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead. A short snippet helps.
+    validations:
+      required: true
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options: ["@hyperodds/ai-sdk", "@hyperodds/langchain", "@hyperodds/openai-agents", "@hyperodds/client"]
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: The package, the framework (`ai`, `@langchain/core` or `@openai/agents`), Zod and Node.js.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      description: The error and its stack, with anything private removed.
+      render: text
