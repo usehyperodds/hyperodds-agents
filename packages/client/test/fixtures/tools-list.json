@@ -1,0 +1,167 @@
+{
+  "recorded": "2026-11-04",
+  "from": "https://api.usehyperodds.com/mcp tools/list",
+  "tools": [
+    {
+      "name": "odds_markets",
+      "description": "Lists HIP-4 outcome markets from every deployer with live top of book, fair line and edge after all fees. Filter by category, deployer or text, sort by edge, volume, new or settling, and page with offset.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "sports",
+              "crypto",
+              "equities",
+              "commodities",
+              "indices",
+              "macro",
+              "ipo",
+              "awards",
+              "other"
+            ]
+          },
+          "deployer": {
+            "description": "Deployer code, such as hl (Hyperliquid, settled by the protocol), out, txyz or skew",
+            "type": "string",
+            "maxLength": 16
+          },
+          "sort": {
+            "description": "volume (default): most traded first. edge: lines with confidence of at least 0.5 that rest on more than one quote, on books with depth and a spread of at most 10 points, first; then the largest edge. new: newest listings first. settling: soonest to settle first",
+            "type": "string",
+            "enum": [
+              "edge",
+              "volume",
+              "new",
+              "settling"
+            ]
+          },
+          "q": {
+            "description": "Text to look for in the title, label, subcategory or deployer",
+            "type": "string",
+            "maxLength": 100
+          },
+          "limit": {
+            "description": "Default 20, at most 100",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "offset": {
+            "description": "Markets to skip, for the next page. Default 0",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
+      },
+      "annotations": {
+        "title": "HIP-4 markets",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "odds_cluster",
+      "description": "Gives one question listed by several HIP-4 deployers: each member's rule grade against the anchor (SAME, CLOSE or DIFFERENT) with the differences found, its top of book, and the merged book across SAME members. Look it up by cluster id or by any member's outcome id.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Cluster id, as odds_markets gives it",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "outcome": {
+            "description": "Any member's outcome id",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "annotations": {
+        "title": "Same question across deployers",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "odds_fair",
+      "description": "Gives one market's fair line (probability and band, method, confidence, and each source with its weight and age) with the top of book and the edge after all fees for each way to trade. Check confidence and singleSource before acting on the line.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Outcome id"
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "annotations": {
+        "title": "Fair line",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "odds_new",
+      "description": "Lists HIP-4 markets newest first, with the same fields as odds_markets. Outcome ids grow with each listing.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "sports",
+              "crypto",
+              "equities",
+              "commodities",
+              "indices",
+              "macro",
+              "ipo",
+              "awards",
+              "other"
+            ]
+          },
+          "limit": {
+            "description": "Default 20, at most 100",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "offset": {
+            "description": "Markets to skip, for the next page. Default 0",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
+      },
+      "annotations": {
+        "title": "Newest listings",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

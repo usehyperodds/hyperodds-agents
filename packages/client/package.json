@@ -1,0 +1,50 @@
+{
+  "name": "@hyperodds/client",
+  "version": "0.1.0",
+  "description": "Client for the hosted Hyperodds MCP server, with the schemas and descriptions of its read-only Hyperliquid HIP-4 market tools.",
+  "keywords": [
+    "hyperodds",
+    "hyperliquid",
+    "hip-4",
+    "outcome-markets",
+    "prediction-markets",
+    "mcp",
+    "ai-agents",
+    "tools"
+  ],
+  "homepage": "https://github.com/usehyperodds/hyperodds-agents/tree/main/packages/client#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usehyperodds/hyperodds-agents.git",
+    "directory": "packages/client"
+  },
+  "bugs": {
+    "url": "https://github.com/usehyperodds/hyperodds-agents/issues"
+  },
+  "license": "MIT",
+  "author": "Hyperodds <dev@usehyperodds.com> (https://usehyperodds.com)",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "zod": "^4.1.8"
+  }
+}
