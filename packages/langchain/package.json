@@ -1,0 +1,56 @@
+{
+  "name": "@hyperodds/langchain",
+  "version": "0.1.0",
+  "description": "Hyperodds tools for LangChain.js: read-only data on Hyperliquid HIP-4 outcome markets from every deployer, for createAgent and any model that calls tools.",
+  "keywords": [
+    "hyperodds",
+    "hyperliquid",
+    "hip-4",
+    "outcome-markets",
+    "prediction-markets",
+    "langchain",
+    "langchainjs",
+    "langgraph",
+    "ai-agents",
+    "tools"
+  ],
+  "homepage": "https://github.com/usehyperodds/hyperodds-agents/tree/main/packages/langchain#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usehyperodds/hyperodds-agents.git",
+    "directory": "packages/langchain"
+  },
+  "bugs": {
+    "url": "https://github.com/usehyperodds/hyperodds-agents/issues"
+  },
+  "license": "MIT",
+  "author": "Hyperodds <dev@usehyperodds.com> (https://usehyperodds.com)",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@hyperodds/client": "0.1.0"
+  },
+  "peerDependencies": {
+    "@langchain/core": "^1.0.0",
+    "zod": "^4.1.8"
+  }
+}
