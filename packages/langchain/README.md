@@ -1,8 +1,9 @@
 # @hyperodds/langchain
 
-Hyperodds tools for [LangChain.js](https://js.langchain.com): live, read-only data on Hyperliquid's
-HIP-4 outcome markets from every deployer, for `createAgent`, `model.bindTools` and LangGraph.
-Free, with no Hyperodds key.
+Hyperodds tools for
+[LangChain.js](https://docs.langchain.com/oss/javascript/langchain/overview): live, read-only data
+on Hyperliquid's HIP-4 outcome markets from every deployer, for `createAgent`, `model.bindTools`
+and LangGraph. Free, with no Hyperodds key.
 
 ```sh
 npm i @hyperodds/langchain @langchain/core zod
