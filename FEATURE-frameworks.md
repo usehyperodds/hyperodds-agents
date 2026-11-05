@@ -1,4 +1,4 @@
-# Bullish 7: frameworks
+# Feature 7: frameworks
 
 **Hyperodds tools for Vercel's AI SDK, LangChain and the OpenAI Agents SDK.**
 
@@ -9,7 +9,7 @@ They are built by us on each framework's public tool interface and read the host
 
 ## What works now
 
-On branch `bullish/frameworks` of `hyperodds-agents`, all checks green (`npm run lint`,
+On branch `feature/frameworks` of `hyperodds-agents`, all checks green (`npm run lint`,
 `npm run typecheck`, `npm test`: 40 tests).
 
 | Package                    | What it gives                                                                      | Tested against                                              |
@@ -81,7 +81,7 @@ repository; the model's wording in a real run is the model's.
 ## Operator actions
 
 1. Create the public repository `usehyperodds/hyperodds-agents` on GitHub (empty, MIT, default
-   branch `main`), merge `bullish/frameworks` into `main` and push it. Add the `NPM_TOKEN` secret
+   branch `main`), merge `feature/frameworks` into `main` and push it. Add the `NPM_TOKEN` secret
    (an npm automation token for `developerhyperodds`), the same as `hyperodds-mcp` uses.
 2. Publish, either from CI with provenance (preferred, matches `@hyperodds/mcp`):
 
@@ -102,7 +102,7 @@ repository; the model's wording in a real run is the model's.
    The client must go first: the other three depend on `@hyperodds/client@0.1.0`.
 3. Check the four pages on npmjs.com, then run one example with a real OpenAI key and keep the
    output for a reply under the post.
-4. Post the announcement below, with `docs/bullish/frameworks/quickstart.png` and the GitHub link in
+4. Post the announcement below, with `docs/feature/frameworks/quickstart.png` and the GitHub link in
    the first reply.
 
 ## Honest limits
@@ -123,10 +123,10 @@ repository; the model's wording in a real run is the model's.
 
 ## Links
 
-- Branch: `hyperodds-agents`, `bullish/frameworks`
+- Branch: `hyperodds-agents`, `feature/frameworks`
 - Packages: `packages/client`, `packages/ai-sdk`, `packages/langchain`, `packages/openai-agents`
 - Demo: `scripts/demo.ts`; examples: `examples/`
-- Assets: `docs/bullish/frameworks/quickstart.png`, `demo-ai-sdk.png`, `demo-langchain.png`,
+- Assets: `docs/feature/frameworks/quickstart.png`, `demo-ai-sdk.png`, `demo-langchain.png`,
   `demo-openai-agents.png` (1440×900)
 - Hosted server: https://api.usehyperodds.com/mcp; guide: https://usehyperodds.com/docs/mcp
 - Framework docs used: https://ai-sdk.dev/docs/foundations/tools,
