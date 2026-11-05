@@ -62,7 +62,7 @@ npm run demo
 It lists the live tools, then runs every tool through each package the way that framework executes
 a model's tool call (AI SDK `execute`, a LangChain tool call that returns a `ToolMessage`, an
 Agents SDK `invoke` with the nulls a strict model sends), and prints the answers: 13 tool calls,
-about 5 seconds. Run end to end on 2026-11-04 at 23:41 UTC; the screenshots are that run.
+about 2 seconds. Run end to end on 2026-11-04 at 23:41 UTC; the screenshots are that run.
 
 The examples ask a real model, with the user's key:
 
