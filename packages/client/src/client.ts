@@ -74,7 +74,8 @@ export class Hyperodds {
     this.url = options.url ?? DEFAULT_URL;
     this.timeoutMs = options.timeoutMs ?? 30_000;
     this.userAgent = [options.userAgent, `hyperodds-client/${version}`].filter(Boolean).join(" ");
-    this.fetch = options.fetch ?? globalThis.fetch;
+    // Unbound, since Workers and browsers refuse a fetch called as a method of another object.
+    this.fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   }
 
   /** Markets from every deployer, with top of book, fair line and edge after fees. */

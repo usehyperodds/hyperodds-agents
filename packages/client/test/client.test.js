@@ -31,6 +31,22 @@ describe("Hyperodds", () => {
     assert.notEqual(mcp.sent[2].body.id, mcp.sent[3].body.id);
   });
 
+  test("calls the global fetch as a plain function, looked up at call time", async () => {
+    const mcp = server();
+    const client = new Hyperodds();
+    const original = globalThis.fetch;
+    globalThis.fetch = function (url, init) {
+      assert.notEqual(this, client);
+      return mcp.fetch(url, init);
+    };
+    try {
+      assert.equal((await client.markets()).count, 1);
+      assert.equal(mcp.calls().length, 1);
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
   test("lists the tools the server offers", async () => {
     const mcp = server();
     const listed = await new Hyperodds({ fetch: mcp.fetch }).listTools();
