@@ -152,6 +152,29 @@ describe("Hyperodds", () => {
     assert.equal(error.message, "Could not reach Hyperodds at http://127.0.0.1:9/mcp (ECONNREFUSED).");
   });
 
+  test("a JSON answer that is not JSON-RPC names the status and the server's words", async () => {
+    const mcp = server({}, (body) =>
+      body.method === "tools/call" ? json({ error: "not found" }, 404) : undefined,
+    );
+    const error = await new Hyperodds({ fetch: mcp.fetch }).markets().catch((e) => e);
+    assert.equal(error.message, "Hyperodds replied HTTP 404: not found");
+    assert.equal(error.code, 404);
+  });
+
+  test("a network failure keeps its cause and leaves the query string out of the message", async () => {
+    const failure = new TypeError("fetch failed", { cause: { code: "ENOTFOUND" } });
+    const error = await new Hyperodds({
+      url: "https://proxy.example/mcp?token=hunter2",
+      fetch: async () => {
+        throw failure;
+      },
+    })
+      .markets()
+      .catch((e) => e);
+    assert.equal(error.message, "Could not reach Hyperodds at https://proxy.example/mcp (ENOTFOUND).");
+    assert.equal(error.cause, failure);
+  });
+
   test("a failed handshake is tried again on the next call", async () => {
     let fail = true;
     const mcp = server();

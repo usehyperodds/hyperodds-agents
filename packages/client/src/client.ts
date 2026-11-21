@@ -35,8 +35,9 @@ export class HyperoddsError extends Error {
     message: string,
     /** The JSON-RPC error code, or the HTTP status when the server sent no JSON-RPC answer. */
     readonly code?: number,
+    options?: ErrorOptions,
   ) {
-    super(message);
+    super(message, options);
   }
 }
 
@@ -57,7 +58,7 @@ interface RpcResponse {
     structuredContent?: unknown;
     content?: { type?: unknown; text?: unknown }[];
   };
-  error?: { code?: unknown; message?: unknown };
+  error?: unknown;
 }
 
 /**
@@ -66,6 +67,8 @@ interface RpcResponse {
  */
 export class Hyperodds {
   readonly url: string;
+  // Origin and path only: a token in the query string must not reach a model or a log.
+  private readonly where: string;
   private readonly timeoutMs: number;
   private readonly userAgent: string;
   private readonly fetch: typeof fetch;
@@ -78,7 +81,9 @@ export class Hyperodds {
       throw new TypeError("url must be an absolute http or https URL.");
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > MAX_TIMEOUT_MS)
       throw new RangeError(`timeoutMs must be a whole number of milliseconds from 1 to ${MAX_TIMEOUT_MS}.`);
+    const { origin, pathname } = new URL(url);
     this.url = url;
+    this.where = origin + pathname;
     this.timeoutMs = timeoutMs;
     this.userAgent = [options.userAgent, `hyperodds-client/${version}`].filter(Boolean).join(" ");
     // Unbound, since Workers and browsers refuse a fetch called as a method of another object.
@@ -155,10 +160,16 @@ export class Hyperodds {
   ): Promise<RpcResponse> {
     const id = this.nextId++;
     const { status, answer } = await this.exchange({ jsonrpc: "2.0", id, method, params }, signal, protocol);
-    if (answer?.error) {
-      const message = typeof answer.error.message === "string" ? answer.error.message : "no reason given";
-      const code = typeof answer.error.code === "number" ? answer.error.code : status;
-      throw new HyperoddsError(`Hyperodds refused the request: ${message}`, code);
+    const error = answer?.error;
+    if (typeof error === "string")
+      throw new HyperoddsError(`Hyperodds replied HTTP ${status}: ${error.slice(0, 200)}`, status);
+    if (error) {
+      const { message, code } = error as { message?: unknown; code?: unknown };
+      const reason = typeof message === "string" ? message : "no reason given";
+      throw new HyperoddsError(
+        `Hyperodds refused the request: ${reason}`,
+        typeof code === "number" ? code : status,
+      );
     }
     if (!answer?.result) throw new HyperoddsError(`Hyperodds replied HTTP ${status} with no answer.`, status);
     return answer;
@@ -199,14 +210,29 @@ export class Hyperodds {
     } catch (error) {
       if (signal?.aborted) throw signal.reason;
       if (timeout.aborted)
-        throw new HyperoddsError(`Hyperodds did not answer within ${this.timeoutMs / 1000} seconds.`);
+        throw new HyperoddsError(
+          `Hyperodds did not answer within ${this.timeoutMs / 1000} seconds.`,
+          undefined,
+          {
+            cause: error,
+          },
+        );
       if (error instanceof SyntaxError)
-        throw new HyperoddsError("Hyperodds sent an answer that is not JSON.");
-      const code = (error as { cause?: { code?: unknown } }).cause?.code;
-      const detail = typeof code === "string" ? code : error instanceof Error ? error.message : String(error);
-      throw new HyperoddsError(`Could not reach Hyperodds at ${this.url} (${detail}).`);
+        throw new HyperoddsError("Hyperodds sent an answer that is not JSON.", undefined, { cause: error });
+      const code = networkCode(error);
+      const detail = code ?? (error instanceof Error ? error.message : String(error));
+      throw new HyperoddsError(`Could not reach Hyperodds at ${this.where} (${detail}).`, undefined, {
+        cause: error,
+      });
     }
   }
+}
+
+/** The system error code under a failed fetch, such as ECONNRESET, if there is one. */
+function networkCode(error: unknown): string | undefined {
+  const cause = (error as { cause?: { code?: unknown; errors?: { code?: unknown }[] } })?.cause;
+  const code = cause?.code ?? cause?.errors?.[0]?.code;
+  return typeof code === "string" ? code : undefined;
 }
 
 async function* events(body: ReadableStream<Uint8Array>): AsyncGenerator<string> {
