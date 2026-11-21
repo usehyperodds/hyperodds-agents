@@ -19,6 +19,8 @@ Notable changes to `@hyperodds/client`, `@hyperodds/ai-sdk`, `@hyperodds/langcha
   the numbers.
 - Text written by deployers comes back with control, zero-width and bidirectional formatting
   characters removed.
+- The client tries a call once more when the server asks to wait 5 seconds or less, or after a
+  dropped connection or a failed gateway.
 - `npm run demo` runs every tool through each package against the hosted server; the examples ask
   a model with each framework.
 
