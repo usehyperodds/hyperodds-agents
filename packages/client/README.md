@@ -16,8 +16,16 @@ import { Hyperodds } from "@hyperodds/client";
 
 const hyperodds = new Hyperodds();
 const { markets } = await hyperodds.markets({ sort: "edge", limit: 5 });
-const line = await hyperodds.fair({ outcome: markets[0].outcome });
+const top = markets[0];
+if (top) {
+  console.log(top.title, top.edgePts, top.fairConfidence, top.singleSource);
+  const line = await hyperodds.fair({ outcome: top.outcome });
+  console.log(line.fair?.p, line.fair?.confidence, line.fair?.singleSource, line.edge?.buy0);
+}
 ```
+
+The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
+`package.json` sets `"type": "module"`.
 
 | Method                       | Tool           | Returns                                                         |
 | ---------------------------- | -------------- | --------------------------------------------------------------- |
@@ -26,6 +34,17 @@ const line = await hyperodds.fair({ outcome: markets[0].outcome });
 | `fair({ outcome })`          | `odds_fair`    | One market's fair line with its sources, book and edges         |
 | `cluster({ id \| outcome })` | `odds_cluster` | One question across deployers, with rule grades and merged book |
 | `listTools()`                |                | The tools as the server describes them                          |
+
+A market in `markets()` and `newest()` carries `outcome`, `title`, `deployer`, `deployerName`,
+`category`, `status`, `sides`, `bid`, `ask`, `fair`, `fairConfidence`, `singleSource`, `edgePts`,
+`edgeSide`, `volume24h`, `settles`, `listed`, `clusterId` and `url`; the list adds `total` and
+`count`. Here `fair` is a number, the line's probability.
+
+`fair()` nests the same line with its detail: `fair.p`, `fair.lo` and `fair.hi` (the line and its
+band), `fair.method`, `fair.confidence`, `fair.singleSource`, `fair.flags`, `fair.sources` (each with
+`name`, `p`, `weight` and `ageS`), `fair.updated` and `fair.ageS`. Next to it come `book.bid`,
+`book.ask` and `book.mid`, and `edge.refUsd` with `edge.buy0`, `edge.buy1`, `edge.sell0` and
+`edge.sell1`. `fair` and `edge` are null when Hyperodds has no line for the market.
 
 Every method takes `{ signal }` to cancel. A refused call throws a `HyperoddsError` with the
 server's reason. `tools` holds each tool's description and Zod input schema, `runTool` runs one
