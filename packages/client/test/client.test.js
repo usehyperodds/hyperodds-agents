@@ -175,18 +175,96 @@ describe("Hyperodds", () => {
     assert.equal(error.cause, failure);
   });
 
+  test("waits out a rate limit of 5 seconds or less once, then gives up", async () => {
+    const limited = (after) =>
+      new Response(
+        JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32028, message: "Too many requests." } }),
+        { status: 429, headers: { "content-type": "application/json", "retry-after": after } },
+      );
+    const once = server(
+      {},
+      (body) => body.method === "tools/call" && once.calls().length === 1 && limited("0"),
+    );
+    assert.equal((await new Hyperodds({ fetch: once.fetch }).markets()).count, 1);
+    assert.equal(once.calls().length, 2);
+
+    const always = server({}, (body) => body.method === "tools/call" && limited("0"));
+    await assert.rejects(new Hyperodds({ fetch: always.fetch }).markets(), /Too many requests/);
+    assert.equal(always.calls().length, 2);
+
+    const long = server({}, (body) => body.method === "tools/call" && limited("30"));
+    await assert.rejects(new Hyperodds({ fetch: long.fetch }).markets(), /Too many requests/);
+    assert.equal(long.calls().length, 1);
+  });
+
+  test("tries a bad gateway and a reset connection once more", async () => {
+    const gateway = server(
+      {},
+      (body) =>
+        body.method === "tools/call" &&
+        gateway.calls().length === 1 &&
+        new Response("<html>bad gateway</html>", { status: 502, headers: { "content-type": "text/html" } }),
+    );
+    assert.equal((await new Hyperodds({ fetch: gateway.fetch }).newest()).count, 1);
+    assert.equal(gateway.calls().length, 2);
+
+    const mcp = server();
+    let resets = 0;
+    const flaky = async (url, init) => {
+      if (JSON.parse(init.body).method === "tools/call" && resets++ === 0)
+        throw new TypeError("fetch failed", { cause: { code: "ECONNRESET" } });
+      return mcp.fetch(url, init);
+    };
+    assert.equal((await new Hyperodds({ fetch: flaky }).fair({ outcome: 25457 })).outcome, 25457);
+    assert.equal(mcp.calls().length, 1);
+  });
+
+  test("never sends a tool outside the read-only catalog twice", async () => {
+    const mcp = server(
+      {},
+      (body) =>
+        body.method === "tools/call" &&
+        new Response("<html>bad gateway</html>", { status: 502, headers: { "content-type": "text/html" } }),
+    );
+    await assert.rejects(new Hyperodds({ fetch: mcp.fetch }).call("place_order", {}), /HTTP 502/);
+    assert.equal(mcp.calls().length, 1);
+  });
+
+  test("the caller's abort ends the wait before a retry", async () => {
+    const mcp = server(
+      {},
+      (body) =>
+        body.method === "tools/call" &&
+        new Response(
+          JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32028, message: "Slow down." } }),
+          {
+            status: 429,
+            headers: { "content-type": "application/json", "retry-after": "5" },
+          },
+        ),
+    );
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(new Error("user left")), 20);
+    const started = Date.now();
+    await assert.rejects(
+      new Hyperodds({ fetch: mcp.fetch }).markets({}, { signal: controller.signal }),
+      /user left/,
+    );
+    assert.ok(Date.now() - started < 1000);
+  });
+
   test("a failed handshake is tried again on the next call", async () => {
     let fail = true;
     const mcp = server();
     const flaky = async (url, init) => {
       if (fail) {
         fail = false;
-        throw new TypeError("fetch failed", { cause: { code: "ECONNRESET" } });
+        throw new TypeError("fetch failed", { cause: { code: "ECONNREFUSED" } });
       }
       return mcp.fetch(url, init);
     };
     const client = new Hyperodds({ fetch: flaky });
-    await assert.rejects(client.markets(), /ECONNRESET/);
+    await assert.rejects(client.markets(), /ECONNREFUSED/);
     assert.equal((await client.markets()).count, 1);
   });
 

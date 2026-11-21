@@ -1,3 +1,4 @@
+import { tools } from "./tools.js";
 import type {
   Cluster,
   ClusterInput,
@@ -13,6 +14,9 @@ export const DEFAULT_URL = "https://api.usehyperodds.com/mcp";
 const PROTOCOL_VERSION = "2025-06-18";
 // The longest delay a timer takes; a longer one fires at once.
 const MAX_TIMEOUT_MS = 2_147_483_647;
+// A rate limit or a restart that asks for a longer wait will not clear within one retry.
+const MAX_RETRY_WAIT_MS = 5_000;
+const RETRY_PAUSE_MS = 250;
 
 export interface HyperoddsOptions {
   /** The MCP endpoint. Defaults to the hosted server. */
@@ -120,7 +124,15 @@ export class Hyperodds {
   /** Calls a tool by name and returns its structured result. */
   async call(name: string, args: object, options: CallOptions = {}): Promise<unknown> {
     const protocol = await this.initialize();
-    const { result } = await this.request("tools/call", { name, arguments: args }, options.signal, protocol);
+    // Only the catalog's tools are known to be read-only, so only they are sent twice.
+    const retry = Object.hasOwn(tools, name);
+    const { result } = await this.request(
+      "tools/call",
+      { name, arguments: args },
+      options.signal,
+      protocol,
+      retry,
+    );
     const text = result?.content?.find((c) => c.type === "text")?.text;
     if (result?.isError === true)
       throw new HyperoddsError(typeof text === "string" ? text : `Hyperodds could not run ${name}.`);
@@ -152,14 +164,29 @@ export class Hyperodds {
     return protocol;
   }
 
+  /** With `retry`, a dropped connection, a bad gateway or a short wait the server asks for gets one more try. */
   private async request(
     method: string,
     params: object,
     signal?: AbortSignal,
     protocol?: string,
+    retry = true,
   ): Promise<RpcResponse> {
     const id = this.nextId++;
-    const { status, answer } = await this.exchange({ jsonrpc: "2.0", id, method, params }, signal, protocol);
+    let reply: Awaited<ReturnType<Hyperodds["exchange"]>>;
+    try {
+      reply = await this.exchange({ jsonrpc: "2.0", id, method, params }, signal, protocol);
+    } catch (error) {
+      if (!retry || networkCode((error as Error).cause) !== "ECONNRESET") throw error;
+      await pause(RETRY_PAUSE_MS, signal);
+      return this.request(method, params, signal, protocol, false);
+    }
+    const { status, answer, retryAfter } = reply;
+    const wait = retry ? retryDelay(status, retryAfter) : null;
+    if (wait !== null) {
+      await pause(wait, signal);
+      return this.request(method, params, signal, protocol, false);
+    }
     const error = answer?.error;
     if (typeof error === "string")
       throw new HyperoddsError(`Hyperodds replied HTTP ${status}: ${error.slice(0, 200)}`, status);
@@ -180,7 +207,7 @@ export class Hyperodds {
     message: { jsonrpc: "2.0"; id?: number; method: string; params?: object },
     signal?: AbortSignal,
     protocol?: string,
-  ): Promise<{ status: number; answer?: RpcResponse }> {
+  ): Promise<{ status: number; answer?: RpcResponse; retryAfter: string | null }> {
     const timeout = AbortSignal.timeout(this.timeoutMs);
     try {
       const res = await this.fetch(this.url, {
@@ -195,18 +222,20 @@ export class Hyperodds {
         signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
       });
       const type = res.headers.get("content-type") ?? "";
+      const { status } = res;
+      const retryAfter = res.headers.get("retry-after");
       if (message.id !== undefined && type.includes("application/json"))
-        return { status: res.status, answer: (await res.json()) as RpcResponse };
+        return { status, retryAfter, answer: (await res.json()) as RpcResponse };
       if (message.id !== undefined && type.includes("text/event-stream") && res.body) {
         for await (const data of events(res.body)) {
           const answer = JSON.parse(data) as RpcResponse;
           // A refusal made before the server read the message (a rate limit, say) has no id.
           if (answer.id === message.id || (answer.id === null && answer.error))
-            return { status: res.status, answer };
+            return { status, retryAfter, answer };
         }
       }
       await res.body?.cancel();
-      return { status: res.status };
+      return { status, retryAfter };
     } catch (error) {
       if (signal?.aborted) throw signal.reason;
       if (timeout.aborted)
@@ -226,6 +255,29 @@ export class Hyperodds {
       });
     }
   }
+}
+
+/** How long to wait before the one retry, or null when the answer stands. */
+function retryDelay(status: number, retryAfter: string | null): number | null {
+  if (status === 502) return RETRY_PAUSE_MS;
+  if ((status !== 429 && status !== 503) || !retryAfter) return null;
+  const ms = /^\s*\d+\s*$/.test(retryAfter) ? Number(retryAfter) * 1000 : Date.parse(retryAfter) - Date.now();
+  return ms <= MAX_RETRY_WAIT_MS ? Math.max(0, ms) : null;
+}
+
+function pause(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason);
+    const stop = () => {
+      clearTimeout(timer);
+      reject(signal?.reason);
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", stop);
+      resolve();
+    }, ms);
+    signal?.addEventListener("abort", stop, { once: true });
+  });
 }
 
 /** The system error code under a failed fetch, such as ECONNRESET, if there is one. */
