@@ -111,6 +111,10 @@ async function block(plan: Plan, clustered: Market[], fallback: Market) {
       const grade = `${m.grade}${diffs.length ? ` on ${diffs.join(", ")}` : ""}`;
       console.log(row(m, `${grade}, ${m.deployerName}`));
     }
+  } else {
+    console.log(
+      `  ${bold("odds_cluster")} ${dim("skipped: no busy market is listed by another deployer right now")}`,
+    );
   }
 
   const fresh = await run<MarketList>("odds_new", plan.fresh);
@@ -145,7 +149,11 @@ const busiest = await client.markets({ sort: "volume", limit: 100 });
 const clustered = [
   ...new Map(busiest.markets.filter((m) => m.clusterId).map((m) => [m.clusterId, m])).values(),
 ];
-const fallback = busiest.markets.find((m) => m.fair !== null) ?? busiest.markets[0]!;
+const fallback = busiest.markets.find((m) => m.fair !== null) ?? busiest.markets[0];
+if (!fallback) {
+  console.error("The server listed no markets, so there is nothing to show.");
+  process.exit(1);
+}
 
 const plans: Plan[] = [
   {
@@ -160,14 +168,20 @@ const plans: Plan[] = [
     via: viaLangChain,
     markets: { category: "crypto", sort: "settling", limit: 3 },
     fresh: { category: "crypto", limit: 3 },
-    cluster: (c) => (c[1] ? { outcome: c[1].outcome } : null),
+    cluster: (c) => {
+      const m = c[1] ?? c[0];
+      return m ? { outcome: m.outcome } : null;
+    },
   },
   {
     label: "OpenAI Agents SDK  @hyperodds/openai-agents",
     via: viaAgents,
     markets: { category: "sports", limit: 3 },
     fresh: { category: "sports", limit: 3 },
-    cluster: (c) => (c[2] ? { id: c[2].clusterId } : null),
+    cluster: (c) => {
+      const m = c[2] ?? c[0];
+      return m ? { id: m.clusterId } : null;
+    },
   },
 ];
 for (const plan of plans) await block(plan, clustered, fallback);

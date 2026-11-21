@@ -90,7 +90,8 @@ npm run demo
 ```
 
 The demo runs every tool through each package against the hosted server, the way each framework
-executes a model's tool call, and prints the answers. It needs no key.
+executes a model's tool call, and prints the answers. It needs no key. `odds_cluster` runs only when
+one of the busiest markets is also listed by another deployer; the demo says when none is.
 
 The [examples](examples) ask a model a question with each framework. They take your OpenAI key, and
 `OPENAI_MODEL` picks another model:
