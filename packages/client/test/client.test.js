@@ -315,6 +315,13 @@ describe("runTool", () => {
     assert.equal((await client.markets()).markets[0].title, title);
   });
 
+  test("clean turns line separators into spaces and drops invisible fillers", () => {
+    const c = (...points) => String.fromCodePoint(...points);
+    assert.equal(clean(`top${c(0x2028)}line${c(0x2029)}end`), "top line end");
+    assert.equal(clean(`a${c(0x3164, 0xffa0, 0x115f, 0x1160, 0x034f)}b`), "ab");
+    assert.equal(clean("ETH above 1,636"), "ETH above 1,636");
+  });
+
   test("clean walks arrays and objects and leaves other values alone", () => {
     assert.deepEqual(clean({ a: ["x\u0000y", 1, null, { b: "z" }], c: true }), {
       a: ["x y", 1, null, { b: "z" }],

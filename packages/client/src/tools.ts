@@ -53,12 +53,13 @@ export async function runTool<K extends ToolName>(
 }
 
 /**
- * Strips control, format (zero-width, bidi override), private-use and surrogate characters from
- * every string. Deployers write the titles and rules, and a model reads them.
+ * Strips control, format (zero-width, bidi override), private-use, surrogate and other invisible
+ * characters, such as Hangul fillers, from every string, and turns line and paragraph separators
+ * into spaces. Deployers write the titles and rules, and a model reads them.
  */
 export function clean<T>(value: T): T {
   if (typeof value === "string")
-    return value.replace(/\p{Cc}+/gu, " ").replace(/[\p{Cf}\p{Co}\p{Cs}]/gu, "") as T;
+    return value.replace(/[\p{Cc}\p{Zl}\p{Zp}]+/gu, " ").replace(/[\p{Cf}\p{Co}\p{Cs}\p{DI}]/gu, "") as T;
   if (Array.isArray(value)) return value.map(clean) as T;
   if (value !== null && typeof value === "object")
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, clean(v)])) as T;
