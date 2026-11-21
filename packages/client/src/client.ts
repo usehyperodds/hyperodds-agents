@@ -11,11 +11,13 @@ import { version } from "./version.js";
 
 export const DEFAULT_URL = "https://api.usehyperodds.com/mcp";
 const PROTOCOL_VERSION = "2025-06-18";
+// The longest delay a timer takes; a longer one fires at once.
+const MAX_TIMEOUT_MS = 2_147_483_647;
 
 export interface HyperoddsOptions {
   /** The MCP endpoint. Defaults to the hosted server. */
   url?: string;
-  /** How long to wait for each answer, in milliseconds. Defaults to 30 seconds. */
+  /** How long to wait for each answer, in whole milliseconds up to 2,147,483,647. Defaults to 30 seconds. */
   timeoutMs?: number;
   /** Goes ahead of the client's own user agent, so you can tell your traffic apart. */
   userAgent?: string;
@@ -71,8 +73,13 @@ export class Hyperodds {
   private nextId = 1;
 
   constructor(options: HyperoddsOptions = {}) {
-    this.url = options.url ?? DEFAULT_URL;
-    this.timeoutMs = options.timeoutMs ?? 30_000;
+    const { url = DEFAULT_URL, timeoutMs = 30_000 } = options;
+    if (!URL.canParse(url) || !/^https?:$/.test(new URL(url).protocol))
+      throw new TypeError("url must be an absolute http or https URL.");
+    if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > MAX_TIMEOUT_MS)
+      throw new RangeError(`timeoutMs must be a whole number of milliseconds from 1 to ${MAX_TIMEOUT_MS}.`);
+    this.url = url;
+    this.timeoutMs = timeoutMs;
     this.userAgent = [options.userAgent, `hyperodds-client/${version}`].filter(Boolean).join(" ");
     // Unbound, since Workers and browsers refuse a fetch called as a method of another object.
     this.fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));

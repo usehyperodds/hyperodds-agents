@@ -47,6 +47,17 @@ describe("Hyperodds", () => {
     }
   });
 
+  test("refuses a timeout a timer cannot keep and a URL fetch cannot reach", () => {
+    for (const timeoutMs of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, 2 ** 31])
+      assert.throws(() => new Hyperodds({ timeoutMs }), RangeError, String(timeoutMs));
+    for (const url of ["", "api.usehyperodds.com/mcp", "ftp://api.usehyperodds.com/mcp"])
+      assert.throws(() => new Hyperodds({ url }), TypeError, url);
+    assert.equal(
+      new Hyperodds({ timeoutMs: 2 ** 31 - 1, url: "http://127.0.0.1:8080/mcp" }).url,
+      "http://127.0.0.1:8080/mcp",
+    );
+  });
+
   test("lists the tools the server offers", async () => {
     const mcp = server();
     const listed = await new Hyperodds({ fetch: mcp.fetch }).listTools();
