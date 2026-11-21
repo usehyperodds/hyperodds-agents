@@ -6,7 +6,7 @@ on Hyperliquid's HIP-4 outcome markets from every deployer, for `createAgent`, `
 and LangGraph. Free, with no Hyperodds key.
 
 ```sh
-npm i @hyperodds/langchain @langchain/core zod
+npm i @hyperodds/langchain @langchain/core @langchain/openai langchain zod
 ```
 
 ```ts
@@ -23,6 +23,9 @@ const { messages } = await agent.invoke({
   messages: [{ role: "user", content: "Is the next Fed decision priced the same on every deployer?" }],
 });
 ```
+
+The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
+`package.json` sets `"type": "module"`.
 
 `hyperoddsTools()` returns four structured tools, `odds_markets`, `odds_new`, `odds_fair` and
 `odds_cluster`, each with a Zod schema that describes every field. A tool message carries the
