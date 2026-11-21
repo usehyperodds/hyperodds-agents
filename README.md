@@ -74,10 +74,11 @@ your framework supports can use the tools; these use OpenAI so that one key runs
 | `odds_fair`    | `outcome`                                                                                                | One market's fair line: probability and band, method, confidence and flags, each source with its weight and age, plus the book and the edge for buying or selling either side |
 | `odds_new`     | `category`, `limit` (up to 100), `offset`                                                                | Markets in listing order, newest first, with the same fields as `odds_markets`                                                                                                |
 
-The tools carry the same names, inputs and descriptions as the hosted MCP server, so an agent
-behaves the same through these packages, through [`@hyperodds/mcp`](https://github.com/usehyperodds/hyperodds-mcp)
-or through a client connected to the server directly. Results come back as typed objects, with
-control and zero-width characters removed from the text deployers write.
+The tools take the same names and inputs as the hosted MCP server, so an agent calls them the same
+way through these packages, through [`@hyperodds/mcp`](https://github.com/usehyperodds/hyperodds-mcp)
+or through a client connected to the server directly. The descriptions a model reads are written for
+these packages. Results come back as typed objects, with control and zero-width characters removed
+from the text deployers write.
 
 ## Try it without a model
 
@@ -108,8 +109,14 @@ after every fee, including the fee Hyperliquid takes at settlement, for a $100 o
 
 Price markets take their fair line from Deribit, Bybit and Cboe option surfaces, or from realized
 volatility on Hyperliquid perps. Sports and events take theirs from matched Polymarket and Kalshi
-quotes. Fair lines are estimates: edge rankings only use lines with a `fairConfidence` of at least
-0.5 and more than one source, so check both before acting on one. The
+quotes. Fair lines are estimates, and two fields say how far to trust one: `fairConfidence`, from 0
+to 1, and `singleSource`, true when one quote sets the line. A line read from an option surface
+counts as more than one quote, since the surface prices every strike.
+
+`sort: "edge"` puts first the markets whose line has a `fairConfidence` of at least 0.5 and more
+than one quote, on a book with depth and a spread of at most 10 points, largest edge first. Every
+other market follows, also largest edge first, so the biggest numbers on a page can sit on the
+weakest lines. Check both fields before acting on any edge. The
 [MCP guide](https://usehyperodds.com/docs/mcp) explains every field.
 
 ## Options

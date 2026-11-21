@@ -21,9 +21,9 @@ export interface Market {
   bid: number | null;
   ask: number | null;
   fair: number | null;
-  /** How far to trust the fair line, 0 to 1. Edge rankings need at least 0.5. */
+  /** How far to trust the fair line, 0 to 1. Sorting by edge ranks lines of at least 0.5 first. */
   fairConfidence: number | null;
-  /** True when one input sets the line; such lines stay out of edge rankings. */
+  /** True when one quote sets the line; sorting by edge ranks such lines after the rest. */
   singleSource: boolean | null;
   /** Best buy edge in points after all fees for a $100 order; null without a line or a fill. */
   edgePts: number | null;
