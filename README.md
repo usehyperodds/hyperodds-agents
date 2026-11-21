@@ -18,7 +18,10 @@ packages need Node.js 22 or later and Zod 4.
 
 ## Quick start
 
-Vercel AI SDK:
+The snippets are ES modules with top-level `await`: run them as `.mjs` files or in a project whose
+`package.json` sets `"type": "module"`.
+
+Vercel AI SDK, with `npm i @hyperodds/ai-sdk ai @ai-sdk/openai zod`:
 
 ```ts
 import { openai } from "@ai-sdk/openai";
@@ -34,7 +37,7 @@ const { text } = await generateText({
 });
 ```
 
-LangChain.js:
+LangChain.js, with `npm i @hyperodds/langchain @langchain/core @langchain/openai langchain zod`:
 
 ```ts
 import { hyperoddsTools, instructions } from "@hyperodds/langchain";
@@ -51,7 +54,7 @@ const { messages } = await agent.invoke({
 });
 ```
 
-OpenAI Agents SDK:
+OpenAI Agents SDK, with `npm i @hyperodds/openai-agents @openai/agents zod`:
 
 ```ts
 import { hyperoddsTools, instructions } from "@hyperodds/openai-agents";
@@ -64,6 +67,10 @@ console.log(result.finalOutput);
 
 `instructions` is a short system prompt that tells the model how to read the numbers. Any tool-calling model
 your framework supports can use the tools; these use OpenAI so that one key runs all three.
+
+To bundle the AI SDK or the OpenAI Agents SDK into one ES module with esbuild, add
+`--banner:js="import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"`,
+since both load Node.js built-ins with `require`.
 
 ## Tools
 
@@ -114,11 +121,16 @@ quotes. Fair lines are estimates, and two fields say how far to trust one: `fair
 to 1, and `singleSource`, true when one quote sets the line. A line read from an option surface
 counts as more than one quote, since the surface prices every strike.
 
-`sort: "edge"` puts first the markets whose line has a `fairConfidence` of at least 0.5 and more
-than one quote, on a book with depth and a spread of at most 10 points, largest edge first. Every
-other market follows, also largest edge first, so the biggest numbers on a page can sit on the
-weakest lines. Check both fields before acting on any edge. The
-[MCP guide](https://usehyperodds.com/docs/mcp) explains every field.
+`odds_fair` gives the same two as `fair.confidence` and `fair.singleSource`.
+
+`sort: "edge"` lists first the markets Hyperodds trusts an edge on: a fair line with a
+`fairConfidence` of at least 0.5 that rests on more than one quote (`singleSource` false), on a
+book quoted on both sides with a spread of at most 10 points and dollars resting within 5 points of
+the mid on each side. They come largest edge first. Every other market follows, also largest edge
+first, and markets with no edge come last, so the biggest numbers on a page can sit on the weakest
+lines. Check both fields before acting on any edge. `odds_markets` and `odds_new` leave out the
+"Other" outcome that some multi-outcome questions list as a fallback. The
+[MCP guide](https://usehyperodds.com/docs/mcp) explains the other fields.
 
 ## Options
 

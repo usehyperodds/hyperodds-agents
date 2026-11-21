@@ -32,7 +32,7 @@ export const marketsInput = z.object({
     .enum(["volume", "edge", "new", "settling"])
     .optional()
     .describe(
-      "volume (default): most traded first. edge: first the markets whose fair line has confidence of at least 0.5 and rests on more than one quote, on a book with depth and a spread of at most 10 points, largest edge after fees first; then every other market, also largest edge first, so check fairConfidence and singleSource on each. new: newest listings first. settling: soonest to settle first",
+      "volume (default): most traded first. edge: first the markets whose fair line has confidence of at least 0.5 and rests on more than one quote, on a book quoted on both sides with a spread of at most 10 points and dollars resting within 5 points of the mid on each side, largest edge after fees first; then every other market, also largest edge first, and markets with no edge last, so check fairConfidence and singleSource on each. new: newest listings first. settling: soonest to settle first",
     ),
   q: z.string().max(100).optional().describe("Text to look for in the title, label, subcategory or deployer"),
   limit: limit.optional(),
