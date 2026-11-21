@@ -34,6 +34,7 @@ jobs:
           for p in ai-sdk langchain openai-agents; do
             test "v$(node -p "require('./packages/$p/package.json').dependencies['@hyperodds/client']")" = "$GITHUB_REF_NAME"
           done
+          test "v$(node --input-type=module -e 'process.stdout.write((await import("./packages/client/dist/version.js")).version)')" = "$GITHUB_REF_NAME"
       # The framework packages depend on the client, so it goes first.
       - run: |
           for p in client ai-sdk langchain openai-agents; do

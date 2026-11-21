@@ -54,7 +54,8 @@ By contributing, you agree to release your work under the [MIT license](LICENSE)
 ## Releases
 
 The four packages share one version. Maintainers release from `main`: bump `version` in each
-package's `package.json` and the `@hyperodds/client` dependency of the other three, add the entry
+package's `package.json`, the `@hyperodds/client` dependency of the other three and
+`packages/client/src/version.ts`, add the entry
 to [CHANGELOG.md](CHANGELOG.md) and push a `vX.Y.Z` tag. The release workflow checks the tag
 against every package, publishes `@hyperodds/client` first and the framework packages after it,
 all with npm provenance, and opens the GitHub release from the changelog entry.

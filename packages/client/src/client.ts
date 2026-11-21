@@ -1,4 +1,3 @@
-import { createRequire } from "node:module";
 import type {
   Cluster,
   ClusterInput,
@@ -8,8 +7,7 @@ import type {
   MarketsInput,
   NewInput,
 } from "./types.js";
-
-const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
+import { version } from "./version.js";
 
 export const DEFAULT_URL = "https://api.usehyperodds.com/mcp";
 const PROTOCOL_VERSION = "2025-06-18";

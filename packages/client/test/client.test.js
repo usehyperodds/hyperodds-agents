@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
+import { createRequire } from "node:module";
 import { describe, test } from "node:test";
 import { clean, DEFAULT_URL, Hyperodds, HyperoddsError, runTool } from "../dist/index.js";
 import { json, market, server } from "./server.js";
+
+const { version } = createRequire(import.meta.url)("../package.json");
 
 describe("Hyperodds", () => {
   test("negotiates once, then sends each call as one POST with the agreed version", async () => {
@@ -23,7 +26,7 @@ describe("Hyperodds", () => {
     assert.deepEqual(mcp.sent[3].body.params, { name: "odds_fair", arguments: { outcome: 22091 } });
     for (const { headers } of mcp.sent) {
       assert.equal(headers.accept, "application/json, text/event-stream");
-      assert.match(headers["user-agent"], /^my-agent\/2 hyperodds-client\/\d+\.\d+\.\d+$/);
+      assert.equal(headers["user-agent"], `my-agent/2 hyperodds-client/${version}`);
     }
     assert.notEqual(mcp.sent[2].body.id, mcp.sent[3].body.id);
   });
