@@ -139,7 +139,7 @@ names the reason and each framework passes it to the model.
 Each IP address gets 1,000 tool calls a day, reset at 00:00 UTC. Every request also counts toward
 a rate limit of 5 a second, with bursts of up to 30. Past either limit, the server answers with an
 error that names it. When it asks to wait 5 seconds or less, the client waits and tries once more,
-as it does after a dropped connection or a failed gateway; a retry counts as another call.
+as it does after a dropped connection or a failed gateway.
 
 ## Development
 
