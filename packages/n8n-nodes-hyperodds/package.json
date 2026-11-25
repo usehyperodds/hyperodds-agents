@@ -30,6 +30,10 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "n8n-node build",
     "build:watch": "tsc --watch",
