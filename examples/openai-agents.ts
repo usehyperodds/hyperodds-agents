@@ -1,11 +1,15 @@
 // Ask a model about HIP-4 markets with the OpenAI Agents SDK.
 // OPENAI_API_KEY=sk-... node examples/openai-agents.ts "What was listed in the last hour?"
+// Without a key, a scripted stand-in runs the same loop against the live tools.
 import { hyperoddsTools, instructions } from "@hyperodds/openai-agents";
-import { Agent, run } from "@openai/agents";
+import { Agent, run, setTracingDisabled } from "@openai/agents";
+import { NOTICE, scriptedAgents } from "./scripted.ts";
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error("Set OPENAI_API_KEY to your OpenAI API key. OPENAI_MODEL picks the model.");
-  process.exit(1);
+const keyed = Boolean(process.env.OPENAI_API_KEY);
+if (!keyed) {
+  console.error(NOTICE);
+  // Traces go to OpenAI and need its key.
+  setTracingDisabled(true);
 }
 
 const question =
@@ -14,7 +18,7 @@ const question =
 const agent = new Agent({
   name: "HIP-4 analyst",
   instructions,
-  model: process.env.OPENAI_MODEL ?? "gpt-5.4-mini",
+  model: keyed ? (process.env.OPENAI_MODEL ?? "gpt-5.4-mini") : scriptedAgents(),
   tools: hyperoddsTools(),
 });
 

@@ -1,19 +1,19 @@
 // Ask a model about HIP-4 markets with a LangChain agent.
 // OPENAI_API_KEY=sk-... node examples/langchain.ts "Is the next Fed decision priced the same on every deployer?"
+// Without a key, a scripted stand-in runs the same loop against the live tools.
 import { hyperoddsTools, instructions } from "@hyperodds/langchain";
 import { ChatOpenAI } from "@langchain/openai";
 import { AIMessage, createAgent } from "langchain";
+import { NOTICE, scriptedLangChain } from "./scripted.ts";
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error("Set OPENAI_API_KEY to your OpenAI API key. OPENAI_MODEL picks the model.");
-  process.exit(1);
-}
+const keyed = Boolean(process.env.OPENAI_API_KEY);
+if (!keyed) console.error(NOTICE);
 
 const question =
   process.argv.slice(2).join(" ") || "Which HIP-4 markets show the biggest edge after fees right now?";
 
 const agent = createAgent({
-  model: new ChatOpenAI({ model: process.env.OPENAI_MODEL ?? "gpt-5.4-mini" }),
+  model: keyed ? new ChatOpenAI({ model: process.env.OPENAI_MODEL ?? "gpt-5.4-mini" }) : scriptedLangChain(),
   tools: hyperoddsTools(),
   systemPrompt: instructions,
 });

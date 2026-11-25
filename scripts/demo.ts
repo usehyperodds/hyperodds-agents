@@ -5,9 +5,13 @@ import {
   type Cluster,
   tools as catalog,
   type FairLine,
+  type ForecastRecord,
   Hyperodds,
+  type Leaderboard,
   type Market,
   type MarketList,
+  type MarketPage,
+  type SearchResults,
   type ToolName,
 } from "@hyperodds/client";
 import { hyperoddsTools as langchainTools } from "@hyperodds/langchain";
@@ -63,6 +67,7 @@ interface Plan {
   via: Call;
   markets: Args;
   fresh: Args;
+  search: Args;
   cluster: (listed: Market[]) => Args | null;
 }
 
@@ -120,6 +125,30 @@ async function block(plan: Plan, clustered: Market[], fallback: Market) {
   const fresh = await run<MarketList>("odds_new", plan.fresh);
   console.log(`${call("odds_new", plan.fresh)}  newest first`);
   for (const m of fresh.markets) console.log(row(m, `${m.deployerName}, listed ${utc(m.listed)}`));
+
+  const found = await run<SearchResults>("search", plan.search);
+  console.log(`${call("search", plan.search)}  ${found.results.length} found`);
+  for (const r of found.results.slice(0, 3)) console.log(`    #${r.id.padEnd(6)} ${fit(r.title, 70)}`);
+  const first = found.results[0];
+  if (first) {
+    const read = { id: first.id };
+    const page = await run<MarketPage>("fetch", read);
+    console.log(`${call("fetch", read)}  ${page.text.length} characters, written to be quoted`);
+    console.log(`    ${fit(page.text.replace(/\s+/g, " "), 104)}`);
+  }
+
+  const top = { limit: 3 };
+  const board = await run<Leaderboard>("odds_leaderboard", top);
+  console.log(
+    `${call("odds_leaderboard", top)}  ${board.total} forecasters ranked, ${board.resolved} resolved forecasts`,
+  );
+  for (const r of board.rows) console.log(`    ${r.rank}. ${r.forecaster}  n ${r.n}  skill ${r.skillFair}`);
+  // With an empty board there is no forecaster to read, so the record of an unused address stands in.
+  const who = { address: board.rows[0]?.forecaster ?? "0x000000000000000000000000000000000000dEaD" };
+  const record = await run<ForecastRecord>("odds_forecast_record", who);
+  console.log(
+    `${call("odds_forecast_record", who)}  ${record.total} public, ${record.pending} before their cutoff`,
+  );
 }
 
 console.log(bold(`Hyperodds tools, live from ${client.url}`));
@@ -129,7 +158,9 @@ console.log(
   ),
 );
 
-const hosted = await client.listTools();
+const listed = await client.listTools();
+const writes = listed.filter((t) => !t.annotations?.readOnlyHint).map((t) => t.name);
+const hosted = listed.filter((t) => t.annotations?.readOnlyHint);
 const differs = hosted.filter((t) => {
   const local = catalog[t.name as ToolName];
   const theirs = Object.keys(t.inputSchema.properties ?? {})
@@ -139,9 +170,10 @@ const differs = hosted.filter((t) => {
 });
 console.log(
   differs.length === 0 && hosted.length === Object.keys(catalog).length
-    ? `The server lists ${hosted.map((t) => t.name).join(", ")}, all read-only, and the packages carry the same four.`
-    : `The server's tools differ from the packages: ${differs.map((t) => t.name).join(", ") || "one is missing"}.`,
+    ? `The server lists ${listed.length} tools. ${hosted.length} are read-only and the packages carry exactly those: ${hosted.map((t) => t.name).join(", ")}. Left out: ${writes.join(", ") || "none"}, which writes.`
+    : `The server's read-only tools differ from the packages: ${differs.map((t) => t.name).join(", ") || "one is missing"}.`,
 );
+if (differs.length > 0 || hosted.length !== Object.keys(catalog).length) process.exitCode = 1;
 
 // One page of the most traded markets, to find questions listed by several deployers.
 calls++;
@@ -161,6 +193,7 @@ const plans: Plan[] = [
     via: viaAiSdk,
     markets: { sort: "edge", limit: 3 },
     fresh: { limit: 3 },
+    search: { query: "biggest edges" },
     cluster: (c) => (c[0] ? { id: c[0].clusterId } : null),
   },
   {
@@ -168,6 +201,7 @@ const plans: Plan[] = [
     via: viaLangChain,
     markets: { category: "crypto", sort: "settling", limit: 3 },
     fresh: { category: "crypto", limit: 3 },
+    search: { query: "bitcoin tomorrow" },
     cluster: (c) => {
       const m = c[1] ?? c[0];
       return m ? { outcome: m.outcome } : null;
@@ -176,8 +210,9 @@ const plans: Plan[] = [
   {
     label: "OpenAI Agents SDK  @hyperodds/openai-agents",
     via: viaAgents,
-    markets: { category: "sports", limit: 3 },
+    markets: { category: "sports", minEdgePts: 0.5, limit: 3 },
     fresh: { category: "sports", limit: 3 },
+    search: { query: "Fed December" },
     cluster: (c) => {
       const m = c[2] ?? c[0];
       return m ? { id: m.clusterId } : null;
