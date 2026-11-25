@@ -27,27 +27,34 @@ if (top) {
 The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
 `package.json` sets `"type": "module"`.
 
-| Method                       | Tool           | Returns                                                         |
-| ---------------------------- | -------------- | --------------------------------------------------------------- |
-| `markets(input)`             | `odds_markets` | Markets with book, fair line and edge after fees                |
-| `newest(input)`              | `odds_new`     | Markets newest first                                            |
-| `fair({ outcome })`          | `odds_fair`    | One market's fair line with its sources, book and edges         |
-| `cluster({ id \| outcome })` | `odds_cluster` | One question across deployers, with rule grades and merged book |
-| `listTools()`                |                | The tools as the server describes them                          |
+| Method                        | Tool                   | Returns                                                          |
+| ----------------------------- | ---------------------- | ---------------------------------------------------------------- |
+| `search({ query })`           | `search`               | Markets that match the words of a question, with pages to cite   |
+| `read({ id })`                | `fetch`                | One market in full, as text written to be quoted, and its fields |
+| `markets(input)`              | `odds_markets`         | Markets with book, fair line and edge after fees                 |
+| `newest(input)`               | `odds_new`             | Markets newest first                                             |
+| `fair({ outcome })`           | `odds_fair`            | One market's fair line with its sources, book and edges          |
+| `cluster({ id \| outcome })`  | `odds_cluster`         | One question across deployers, with rule grades and merged book  |
+| `leaderboard(input)`          | `odds_leaderboard`     | The forecast record's board, with its two baselines              |
+| `forecastRecord({ address })` | `odds_forecast_record` | One forecaster's public record                                   |
+| `listTools()`                 |                        | The tools as the server describes them                           |
 
 A market in `markets()` and `newest()` carries `outcome`, `title`, `deployer`, `deployerName`,
-`category`, `status`, `sides`, `bid`, `ask`, `fair`, `fairConfidence`, `singleSource`, `edgePts`,
-`edgeSide`, `volume24h`, `settles`, `listed`, `clusterId` and `url`; the list adds `total` and
-`count`. Here `fair` is a number, the line's probability.
+`category`, `kind`, `status`, `sides`, `bid`, `ask`, `fair`, `fairConfidence`, `singleSource`,
+`edgePts`, `edgeSide`, `volume24h` (contracts), `starts`, `settlesAt`, `settlesBy`, `settles`,
+`listed`, `clusterId` and `url`; the list adds `asOf`, `total` and `count`. Here `fair` is a
+number, the line's probability.
 
 `fair()` nests the same line with its detail: `fair.p`, `fair.lo` and `fair.hi` (the line and its
 band), `fair.method`, `fair.confidence`, `fair.singleSource`, `fair.flags`, `fair.sources` (each with
-`name`, `p`, `weight` and `ageS`), `fair.updated` and `fair.ageS`. Next to it come `book.bid`,
+`venue`, `label`, `name`, `p`, `weight` and `ageS`), `fair.updated` and `fair.ageS`. Next to it come `book.bid`,
 `book.ask` and `book.mid`, and `edge.refUsd` with `edge.buy0`, `edge.buy1`, `edge.sell0` and
 `edge.sell1`. `fair` and `edge` are null when Hyperodds has no line for the market.
 
 Every method takes `{ signal }` to cancel. A refused call throws a `HyperoddsError` with the
-server's reason. `tools` holds each tool's description and Zod input schema, `runTool` runs one
+server's reason. When the day's allowance is used up, the error also carries `limit`, with `limit`,
+`used` and `resetAt`. The server's `odds_forecast` tool writes to the forecast record and is not in
+the catalog; `call(name, args)` reaches it, and is never sent twice. `tools` holds each tool's description and Zod input schema, `runTool` runs one
 the way a model calls it, and `instructions` is a system prompt line on reading the numbers.
 
 The client speaks MCP over Streamable HTTP with `fetch`, and Zod is its one peer dependency. It negotiates

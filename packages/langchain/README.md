@@ -27,8 +27,9 @@ const { messages } = await agent.invoke({
 The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
 `package.json` sets `"type": "module"`.
 
-`hyperoddsTools()` returns four structured tools, `odds_markets`, `odds_new`, `odds_fair` and
-`odds_cluster`, each with a Zod schema that describes every field. A tool message carries the
+`hyperoddsTools()` returns eight structured tools: `search`, `fetch`, `odds_markets`, `odds_new`,
+`odds_fair`, `odds_cluster`, `odds_leaderboard` and `odds_forecast_record`, each with a Zod schema
+that describes every field. A tool message carries the
 result as JSON; called directly with `tool.invoke(args)`, a tool returns the typed object.
 `instructions` tells the model how to read prices, fair lines and edges.
 

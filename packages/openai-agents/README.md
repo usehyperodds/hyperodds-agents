@@ -20,8 +20,8 @@ console.log(result.finalOutput);
 The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
 `package.json` sets `"type": "module"`.
 
-`hyperoddsTools()` returns four strict function tools, `odds_markets`, `odds_new`, `odds_fair` and
-`odds_cluster`. Strict mode makes the model send every field, with null for the ones it leaves out;
+`hyperoddsTools()` returns eight strict function tools: `search`, `fetch`, `odds_markets`,
+`odds_new`, `odds_fair`, `odds_cluster`, `odds_leaderboard` and `odds_forecast_record`. Strict mode makes the model send every field, with null for the ones it leaves out;
 the SDK drops those nulls before the call reaches Hyperodds. `instructions` tells the model how to
 read prices, fair lines and edges.
 

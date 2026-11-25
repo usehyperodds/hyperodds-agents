@@ -25,9 +25,9 @@ const { text } = await generateText({
 The snippet is an ES module with top-level `await`: run it as a `.mjs` file or in a project whose
 `package.json` sets `"type": "module"`.
 
-`hyperoddsTools()` returns a tool set with `odds_markets`, `odds_new`, `odds_fair` and
-`odds_cluster`. Each tool's input is a Zod schema with a description for every field, and its
-output is typed. A step's `toolResults` can also hold dynamic tools, whose output is `unknown`, so
+`hyperoddsTools()` returns a tool set with `search`, `fetch`, `odds_markets`, `odds_new`,
+`odds_fair`, `odds_cluster`, `odds_leaderboard` and `odds_forecast_record`. Each tool's input is a
+Zod schema with a description for every field, and its output is typed. A step's `toolResults` can also hold dynamic tools, whose output is `unknown`, so
 skip those to read a typed result:
 
 ```ts
