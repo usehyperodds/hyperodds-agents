@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { describe, test } from "node:test";
 import { clean, DEFAULT_URL, Hyperodds, HyperoddsError, runTool } from "../dist/index.js";
-import { json, market, server } from "./server.js";
+import { board, json, market, page, record, server } from "./server.js";
 
 const { version } = createRequire(import.meta.url)("../package.json");
 
@@ -63,7 +63,17 @@ describe("Hyperodds", () => {
     const listed = await new Hyperodds({ fetch: mcp.fetch }).listTools();
     assert.deepEqual(
       listed.map((t) => t.name),
-      ["odds_markets", "odds_cluster", "odds_fair", "odds_new"],
+      [
+        "odds_markets",
+        "odds_cluster",
+        "odds_fair",
+        "odds_new",
+        "search",
+        "fetch",
+        "odds_forecast",
+        "odds_forecast_record",
+        "odds_leaderboard",
+      ],
     );
     assert.equal(mcp.sent.at(-1).body.method, "tools/list");
   });
@@ -87,6 +97,21 @@ describe("Hyperodds", () => {
     assert.deepEqual(await client.newest(), { total: 0, count: 0, markets: [] });
   });
 
+  test("search, read, leaderboard and forecastRecord call the hosted tools by name", async () => {
+    const mcp = server();
+    const client = new Hyperodds({ fetch: mcp.fetch });
+    assert.deepEqual((await client.search({ query: "bitcoin 80,500" })).results[0].id, "25457");
+    assert.deepEqual(await client.read({ id: "25457" }), page);
+    assert.deepEqual(await client.leaderboard(), board);
+    assert.deepEqual(await client.forecastRecord({ address: record.forecaster }), record);
+    assert.deepEqual(mcp.calls(), [
+      { name: "search", arguments: { query: "bitcoin 80,500" } },
+      { name: "fetch", arguments: { id: "25457" } },
+      { name: "odds_leaderboard", arguments: {} },
+      { name: "odds_forecast_record", arguments: { address: record.forecaster } },
+    ]);
+  });
+
   test("a tool error carries the server's reason", async () => {
     const mcp = server({
       odds_fair: () => ({ isError: true, content: [{ type: "text", text: "No market with outcome id 9." }] }),
@@ -94,6 +119,29 @@ describe("Hyperodds", () => {
     const error = await new Hyperodds({ fetch: mcp.fetch }).fair({ outcome: 9 }).catch((e) => e);
     assert.ok(error instanceof HyperoddsError);
     assert.equal(error.message, "No market with outcome id 9.");
+  });
+
+  test("a used-up daily allowance is a tool error that carries the limit and its reset time", async () => {
+    const resetAt = "2026-11-06T00:00:00.000Z";
+    const text = `Daily free limit of 1000 tool calls reached. It resets at 00:00 UTC (${resetAt}), in 3 h.`;
+    const mcp = server({
+      odds_markets: () => ({
+        isError: true,
+        content: [{ type: "text", text }],
+        _meta: { "hyperodds/limit": { limit: 1000, used: 1000, resetAt } },
+      }),
+    });
+    const error = await new Hyperodds({ fetch: mcp.fetch }).markets().catch((e) => e);
+    assert.ok(error instanceof HyperoddsError);
+    assert.equal(error.message, text);
+    assert.deepEqual(error.limit, { limit: 1000, used: 1000, resetAt });
+    // The answer was HTTP 200, so it is never sent again.
+    assert.equal(mcp.calls().length, 1);
+
+    const other = await new Hyperodds({ fetch: server({ odds_fair: () => ({ isError: true }) }).fetch })
+      .fair({ outcome: 9 })
+      .catch((e) => e);
+    assert.equal(other.limit, undefined);
   });
 
   test("a refusal before the server reads the message names the limit and keeps the code", async () => {
@@ -105,7 +153,10 @@ describe("Hyperodds", () => {
         {
           jsonrpc: "2.0",
           id: null,
-          error: { code: -32029, message: "Daily allowance of 1000 tool calls used." },
+          error: {
+            code: -32029,
+            message: "Too many requests: 5 a second per address, in bursts of up to 20.",
+          },
         },
         429,
       );
@@ -113,7 +164,10 @@ describe("Hyperodds", () => {
     const error = await new Hyperodds({ fetch: mcp.fetch }).markets().catch((e) => e);
     assert.ok(limited);
     assert.ok(error instanceof HyperoddsError);
-    assert.equal(error.message, "Hyperodds refused the request: Daily allowance of 1000 tool calls used.");
+    assert.equal(
+      error.message,
+      "Hyperodds refused the request: Too many requests: 5 a second per address, in bursts of up to 20.",
+    );
     assert.equal(error.code, -32029);
   });
 

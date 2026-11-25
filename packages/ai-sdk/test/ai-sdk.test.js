@@ -21,7 +21,7 @@ const callTool = (toolName, input) =>
 const say = (text) => turn([{ type: "text", text }], "stop");
 
 describe("hyperoddsTools", () => {
-  test("gives the four read-only tools with the catalog's descriptions and schemas", async () => {
+  test("gives the read-only tools with the catalog's descriptions and schemas", async () => {
     const tools = hyperoddsTools();
     assert.deepEqual(Object.keys(tools).sort(), Object.keys(catalog).sort());
     for (const [name, t] of Object.entries(tools)) {
@@ -80,10 +80,41 @@ describe("in generateText", () => {
     assert.equal(result.text, "The line is 47%.");
     assert.deepEqual(mcp.calls(), [{ name: "odds_fair", arguments: { outcome: 25457 } }]);
     const sent = model.doGenerateCalls[0].tools.map((t) => t.name).sort();
-    assert.deepEqual(sent, ["odds_cluster", "odds_fair", "odds_markets", "odds_new"]);
+    assert.deepEqual(sent, Object.keys(catalog).sort());
     const reply = model.doGenerateCalls[1].prompt.at(-1).content[0];
     assert.equal(reply.type, "tool-result");
     assert.deepEqual(reply.output, { type: "json", value: fairLine });
+  });
+
+  test("search then fetch: the model finds a market from words and reads it in full", async () => {
+    const mcp = server();
+    const second = turn(
+      [
+        {
+          type: "tool-call",
+          toolCallId: "call-2",
+          toolName: "fetch",
+          input: JSON.stringify({ id: "25457" }),
+        },
+      ],
+      "tool-calls",
+    );
+    const model = new MockLanguageModelV4({
+      doGenerate: [callTool("search", { query: "bitcoin 80,500" }), second, say("Yes is 41¢ bid, 44¢ ask.")],
+    });
+    const result = await generateText({
+      model,
+      tools: hyperoddsTools({ fetch: mcp.fetch }),
+      stopWhen: stepCountIs(4),
+      prompt: "What does bitcoin above 80,500 trade at?",
+    });
+    assert.equal(result.text, "Yes is 41¢ bid, 44¢ ask.");
+    assert.deepEqual(mcp.calls(), [
+      { name: "search", arguments: { query: "bitcoin 80,500" } },
+      { name: "fetch", arguments: { id: "25457" } },
+    ]);
+    const read = model.doGenerateCalls[2].prompt.at(-1).content[0];
+    assert.equal(read.output.value.metadata.outcome, 25457);
   });
 
   test("a refused call reaches the model with the server's reason", async () => {

@@ -30,7 +30,7 @@ const say = (text) => [
 ];
 
 describe("hyperoddsTools", () => {
-  test("gives the four read-only tools as strict function tools", () => {
+  test("gives the read-only tools as strict function tools", () => {
     const tools = hyperoddsTools();
     assert.deepEqual(
       tools.map((t) => t.name),
@@ -53,6 +53,31 @@ describe("hyperoddsTools", () => {
     assert.deepEqual(mcp.calls(), [
       { name: "odds_markets", arguments: { category: "crypto", sort: "edge", limit: 5 } },
     ]);
+  });
+
+  test("the forecast record takes an address and nothing a strict model left null", async () => {
+    const mcp = server();
+    const tools = hyperoddsTools({ fetch: mcp.fetch });
+    const address = "0x1111111111111111111111111111111111111111";
+    const record = tools.find((t) => t.name === "odds_forecast_record");
+    const out = await record.invoke(
+      new RunContext(),
+      JSON.stringify({ address, limit: null, offset: null, draft: null }),
+    );
+    assert.equal(out.forecaster, address);
+    const board = tools.find((t) => t.name === "odds_leaderboard");
+    await board.invoke(new RunContext(), JSON.stringify({ limit: 3, offset: null }));
+    assert.deepEqual(mcp.calls(), [
+      { name: "odds_forecast_record", arguments: { address } },
+      { name: "odds_leaderboard", arguments: { limit: 3 } },
+    ]);
+    // An address the schema rejects never reaches Hyperodds.
+    const refused = await record.invoke(
+      new RunContext(),
+      JSON.stringify({ address: "vitalik.eth", limit: null, offset: null, draft: null }),
+    );
+    assert.equal(typeof refused, "string");
+    assert.equal(mcp.calls().length, 2);
   });
 
   test("a refused call gives the model the server's reason", async () => {

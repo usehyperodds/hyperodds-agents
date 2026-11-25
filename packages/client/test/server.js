@@ -21,6 +21,7 @@ export function market(over = {}) {
     deployer: "fox",
     deployerName: "fox",
     category: "crypto",
+    kind: "price_binary",
     status: "open",
     sides: ["Yes", "No"],
     bid: 0.41,
@@ -31,6 +32,9 @@ export function market(over = {}) {
     edgePts: 2.1,
     edgeSide: 0,
     volume24h: 1520,
+    starts: null,
+    settlesAt: "2026-11-05T00:00:00.000Z",
+    settlesBy: null,
     settles: "2026-11-05T00:00:00.000Z",
     listed: "2026-11-04T23:00:00.000Z",
     clusterId: null,
@@ -39,11 +43,18 @@ export function market(over = {}) {
   };
 }
 
+const asOf = "2026-11-04T23:40:05.000Z";
+
 export const fairLine = {
+  asOf,
   outcome: 25457,
   title: "BTC above 80,500 at Nov 5 00:00 UTC",
+  kind: "price_binary",
   sides: ["Yes", "No"],
   status: "open",
+  starts: null,
+  settlesAt: "2026-11-05T00:00:00.000Z",
+  settlesBy: null,
   fair: {
     p: 0.47,
     lo: 0.44,
@@ -52,7 +63,9 @@ export const fairLine = {
     confidence: 0.8,
     singleSource: false,
     flags: [],
-    sources: [{ name: "deribit", p: 0.47, weight: 1, ageS: 4 }],
+    sources: [
+      { venue: "Deribit", label: "BTC options surface", name: "deribit", p: 0.47, weight: 1, ageS: 4 },
+    ],
     updated: "2026-11-04T23:40:00.000Z",
     ageS: 5,
   },
@@ -62,6 +75,7 @@ export const fairLine = {
 };
 
 export const cluster = {
+  asOf,
   id: "fed-dec-2026-cut",
   title: "Fed cuts rates in December",
   kind: "macro",
@@ -71,11 +85,67 @@ export const cluster = {
   mergedWithClose: { bids: [], asks: [] },
 };
 
+export const page = {
+  id: "25457",
+  title: "BTC above 80,500 at Nov 5 00:00 UTC · fox",
+  text: "BTC above 80,500 at Nov 5 00:00 UTC. Yes 41¢ bid, 44¢ ask. Fair line 47¢.",
+  url: "https://usehyperodds.com/m/25457",
+  metadata: market(),
+};
+
+const stats = {
+  n: 60,
+  brier: 0.19,
+  nFair: 60,
+  skillFair: 0.012,
+  skillFairLow: 0.002,
+  nMarket: 60,
+  skillMarket: 0.004,
+};
+const forecaster = "0x1111111111111111111111111111111111111111";
+
+export const board = {
+  asOf: "2026-11-04T00:05:00.000Z",
+  through: "2026-11-03",
+  records: 3,
+  settled: 60,
+  settlementsRoot: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  baselines: [
+    { key: "fair", label: "Hyperodds fair line", ...stats, skillFair: 0, skillFairLow: null },
+    { key: "market", label: "Market price", ...stats, skillFairLow: null },
+  ],
+  total: 1,
+  resolved: 60,
+  established: 1,
+  rows: [{ rank: 1, forecaster, ...stats, early: false }],
+};
+
+export const record = {
+  forecaster,
+  summary: { rank: 1, forecaster, ...stats, early: false },
+  pending: 2,
+  pendingMarkets: 2,
+  total: 1,
+  forecasts: [
+    {
+      id: 7,
+      outcome: 25457,
+      title: "BTC above 80,500 at Nov 5 00:00 UTC",
+      probabilityBps: 4700,
+      cutoff: asOf,
+    },
+  ],
+};
+
 const results = {
-  odds_markets: () => ({ structuredContent: { total: 1, count: 1, markets: [market()] } }),
-  odds_new: () => ({ structuredContent: { total: 1, count: 1, markets: [market()] } }),
+  odds_markets: () => ({ structuredContent: { asOf, total: 1, count: 1, markets: [market()] } }),
+  odds_new: () => ({ structuredContent: { asOf, total: 1, count: 1, markets: [market()] } }),
   odds_fair: () => ({ structuredContent: fairLine }),
   odds_cluster: () => ({ structuredContent: cluster }),
+  search: () => ({ structuredContent: { results: [{ id: page.id, title: page.title, url: page.url }] } }),
+  fetch: () => ({ structuredContent: page }),
+  odds_leaderboard: () => ({ structuredContent: board }),
+  odds_forecast_record: () => ({ structuredContent: record }),
 };
 
 /**

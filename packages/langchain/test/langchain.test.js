@@ -9,7 +9,7 @@ import { fairLine, server } from "../../client/test/server.js";
 import { hyperoddsTools, instructions } from "../dist/index.js";
 
 describe("hyperoddsTools", () => {
-  test("gives the four read-only tools with the catalog's names, descriptions and schemas", () => {
+  test("gives the read-only tools with the catalog's names, descriptions and schemas", () => {
     const tools = hyperoddsTools();
     assert.deepEqual(
       tools.map((t) => t.name),
@@ -59,6 +59,23 @@ describe("in createAgent", () => {
     const toolMessage = messages.find((m) => m.type === "tool");
     assert.equal(JSON.parse(toolMessage.content).markets[0].outcome, 25457);
     assert.equal(messages.at(-1).content, "BTC above 80,500 has the largest edge.");
+  });
+
+  test("the agent searches by words and reads the market it finds", async () => {
+    const mcp = server();
+    const model = fakeModel()
+      .respondWithTools([{ name: "search", args: { query: "bitcoin 80,500" }, id: "call-1" }])
+      .respondWithTools([{ name: "fetch", args: { id: "25457" }, id: "call-2" }])
+      .respond(new AIMessage("Yes is 41¢ bid, 44¢ ask."));
+    const agent = createAgent({ model, tools: hyperoddsTools({ fetch: mcp.fetch }) });
+    const { messages } = await agent.invoke({ messages: [new HumanMessage("Bitcoin above 80,500?")] });
+    assert.deepEqual(
+      mcp.calls().map((c) => c.name),
+      ["search", "fetch"],
+    );
+    const read = messages.filter((m) => m.type === "tool").at(-1);
+    assert.equal(JSON.parse(read.content).metadata.outcome, 25457);
+    assert.equal(messages.at(-1).content, "Yes is 41¢ bid, 44¢ ask.");
   });
 
   test("a refused call reaches the model with the server's reason", async () => {

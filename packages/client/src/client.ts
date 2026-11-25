@@ -4,9 +4,17 @@ import type {
   ClusterInput,
   FairInput,
   FairLine,
+  FetchInput,
+  ForecastRecord,
+  ForecastRecordInput,
+  Leaderboard,
+  LeaderboardInput,
   MarketList,
+  MarketPage,
   MarketsInput,
   NewInput,
+  SearchInput,
+  SearchResults,
 } from "./types.js";
 import { version } from "./version.js";
 
@@ -32,16 +40,28 @@ export interface CallOptions {
   signal?: AbortSignal;
 }
 
+/** The daily allowance, as the server reports it once it is used up. */
+export interface DailyLimit {
+  /** Tool calls allowed in a UTC day. */
+  limit: number;
+  used: number;
+  /** When the count starts again. ISO 8601 UTC. */
+  resetAt: string;
+}
+
 export class HyperoddsError extends Error {
   override readonly name = "HyperoddsError";
+  /** Set when the call was refused because the day's allowance is used up. */
+  readonly limit?: DailyLimit;
 
   constructor(
     message: string,
     /** The JSON-RPC error code, or the HTTP status when the server sent no JSON-RPC answer. */
     readonly code?: number,
-    options?: ErrorOptions,
+    options?: ErrorOptions & { limit?: DailyLimit },
   ) {
     super(message, options);
+    if (options?.limit) this.limit = options.limit;
   }
 }
 
@@ -59,6 +79,7 @@ interface RpcResponse {
   result?: {
     protocolVersion?: unknown;
     isError?: unknown;
+    _meta?: Record<string, unknown>;
     structuredContent?: unknown;
     content?: { type?: unknown; text?: unknown }[];
   };
@@ -114,6 +135,26 @@ export class Hyperodds {
     return this.call("odds_cluster", input, options) as Promise<Cluster>;
   }
 
+  /** Markets that match the words of a question, each with its page to cite. */
+  search(input: SearchInput, options?: CallOptions): Promise<SearchResults> {
+    return this.call("search", input, options) as Promise<SearchResults>;
+  }
+
+  /** One market in full, as text written to be quoted: the hosted server's fetch tool. */
+  read(input: FetchInput, options?: CallOptions): Promise<MarketPage> {
+    return this.call("fetch", input, options) as Promise<MarketPage>;
+  }
+
+  /** The forecast record's board: forecasters ranked by skill over the fair line. */
+  leaderboard(input: LeaderboardInput = {}, options?: CallOptions): Promise<Leaderboard> {
+    return this.call("odds_leaderboard", input, options) as Promise<Leaderboard>;
+  }
+
+  /** One forecaster's public record. */
+  forecastRecord(input: ForecastRecordInput, options?: CallOptions): Promise<ForecastRecord> {
+    return this.call("odds_forecast_record", input, options) as Promise<ForecastRecord>;
+  }
+
   /** The tools the server offers, as it describes them to MCP clients. */
   async listTools(options: CallOptions = {}): Promise<HostedTool[]> {
     const protocol = await this.initialize();
@@ -134,8 +175,13 @@ export class Hyperodds {
       retry,
     );
     const text = result?.content?.find((c) => c.type === "text")?.text;
+    // A refusal, such as an unknown market or a used-up daily allowance, arrives as a tool error.
     if (result?.isError === true)
-      throw new HyperoddsError(typeof text === "string" ? text : `Hyperodds could not run ${name}.`);
+      throw new HyperoddsError(
+        typeof text === "string" ? text : `Hyperodds could not run ${name}.`,
+        undefined,
+        { limit: dailyLimit(result._meta?.["hyperodds/limit"]) },
+      );
     if (result?.structuredContent !== undefined) return result.structuredContent;
     try {
       return JSON.parse(String(text));
@@ -255,6 +301,13 @@ export class Hyperodds {
       });
     }
   }
+}
+
+function dailyLimit(meta: unknown): DailyLimit | undefined {
+  const { limit, used, resetAt } = (meta ?? {}) as Partial<DailyLimit>;
+  return typeof limit === "number" && typeof used === "number" && typeof resetAt === "string"
+    ? { limit, used, resetAt }
+    : undefined;
 }
 
 /** How long to wait before the one retry, or null when the answer stands. */
