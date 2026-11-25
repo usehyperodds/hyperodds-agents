@@ -27,6 +27,8 @@ Notable changes to `@hyperodds/client`, `@hyperodds/ai-sdk`, `@hyperodds/langcha
   characters removed.
 - The client tries a call once more when the server asks to wait 5 seconds or less, or after a
   dropped connection or a failed gateway.
+- A call's timeout is kept by the client's own timer, so it reports even when the `fetch` you pass
+  holds nothing open.
 - `npm run demo` runs every tool through each package against the hosted server; the examples ask
   a model with each framework, or run a scripted stand-in when no key is set.
 

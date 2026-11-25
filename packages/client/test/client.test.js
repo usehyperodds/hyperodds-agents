@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { describe, test } from "node:test";
 import { clean, DEFAULT_URL, Hyperodds, HyperoddsError, runTool } from "../dist/index.js";
@@ -327,6 +328,40 @@ describe("Hyperodds", () => {
     const error = await new Hyperodds({ fetch: mcp.fetch, timeoutMs: 50 }).markets().catch((e) => e);
     assert.ok(error instanceof HyperoddsError);
     assert.equal(error.message, "Hyperodds did not answer within 0.05 seconds.");
+  });
+
+  test("the timeout reports even when nothing else keeps the process alive", () => {
+    // A fetch that holds nothing open and gives up when its signal aborts, as a stub or an
+    // in-memory transport does. The client's own timer has to carry the wait, or the process ends
+    // with the call still pending.
+    const script = `
+      import { Hyperodds } from ${JSON.stringify(new URL("../dist/index.js", import.meta.url).href)};
+      const fetch = (url, { signal }) =>
+        new Promise((resolve, reject) => signal.addEventListener("abort", () => reject(signal.reason)));
+      const client = new Hyperodds({ fetch, timeoutMs: 200 });
+      try { await client.markets(); } catch (error) { console.log(error.message); }
+    `;
+    const run = spawnSync(process.execPath, ["--input-type=module", "-e", script], { encoding: "utf8" });
+    assert.equal(run.stdout.trim(), "Hyperodds did not answer within 0.2 seconds.");
+    assert.equal(run.status, 0);
+  });
+
+  test("a settled call leaves no timer behind", () => {
+    const script = `
+      import { Hyperodds } from ${JSON.stringify(new URL("../dist/index.js", import.meta.url).href)};
+      const fetch = async (url, init) => {
+        const body = JSON.parse(init.body);
+        if (body.id === undefined) return new Response(null, { status: 202 });
+        const result = body.method === "initialize" ? { protocolVersion: "2025-06-18" } : { structuredContent: { ok: true } };
+        return new Response(JSON.stringify({ jsonrpc: "2.0", id: body.id, result }), { headers: { "content-type": "application/json" } });
+      };
+      const started = Date.now();
+      await new Hyperodds({ fetch, timeoutMs: 60_000 }).call("odds_markets", {});
+      process.on("exit", () => console.log(Date.now() - started < 5_000 ? "left at once" : "waited"));
+    `;
+    const run = spawnSync(process.execPath, ["--input-type=module", "-e", script], { encoding: "utf8" });
+    assert.equal(run.stdout.trim(), "left at once");
+    assert.equal(run.status, 0);
   });
 
   test("one caller's abort leaves the others' calls alone", async () => {

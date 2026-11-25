@@ -254,7 +254,10 @@ export class Hyperodds {
     signal?: AbortSignal,
     protocol?: string,
   ): Promise<{ status: number; answer?: RpcResponse; retryAfter: string | null }> {
-    const timeout = AbortSignal.timeout(this.timeoutMs);
+    // A timer of our own, since AbortSignal.timeout's is unref'd: with a fetch that holds nothing
+    // open, the process would end before the timeout could report.
+    const timeout = new AbortController();
+    const timer = setTimeout(() => timeout.abort(), this.timeoutMs);
     try {
       const res = await this.fetch(this.url, {
         method: "POST",
@@ -265,7 +268,7 @@ export class Hyperodds {
           ...(protocol ? { "mcp-protocol-version": protocol } : {}),
         },
         body: JSON.stringify(message),
-        signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+        signal: signal ? AbortSignal.any([signal, timeout.signal]) : timeout.signal,
       });
       const type = res.headers.get("content-type") ?? "";
       const { status } = res;
@@ -284,7 +287,7 @@ export class Hyperodds {
       return { status, retryAfter };
     } catch (error) {
       if (signal?.aborted) throw signal.reason;
-      if (timeout.aborted)
+      if (timeout.signal.aborted)
         throw new HyperoddsError(
           `Hyperodds did not answer within ${this.timeoutMs / 1000} seconds.`,
           undefined,
@@ -299,6 +302,8 @@ export class Hyperodds {
       throw new HyperoddsError(`Could not reach Hyperodds at ${this.where} (${detail}).`, undefined, {
         cause: error,
       });
+    } finally {
+      clearTimeout(timer);
     }
   }
 }
