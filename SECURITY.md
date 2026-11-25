@@ -14,8 +14,12 @@ unless you would rather we did not.
 ## Scope
 
 - The packages in this repository: `@hyperodds/client`, `@hyperodds/ai-sdk`,
-  `@hyperodds/langchain` and `@hyperodds/openai-agents`.
-- The hosted MCP endpoint they call, `https://api.usehyperodds.com/mcp`.
+  `@hyperodds/langchain`, `@hyperodds/openai-agents` and `n8n-nodes-hyperodds`.
+- The hosted endpoints they call, `https://api.usehyperodds.com/mcp` and the public read API at
+  `https://api.usehyperodds.com/trpc`.
+- The Hyperodds Trigger's signature check: a request it accepts without a valid
+  `hyperodds-signature` from your signing secret, or a way to replay a signed request outside the
+  five-minute window, is in scope.
 
 Market titles and rules are written by HIP-4 deployers and reach your model as tool output. The
 packages strip control, zero-width and bidirectional formatting characters from that text, which

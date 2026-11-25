@@ -1,0 +1,43 @@
+{
+  "outcome": 22091,
+  "title": "HYPE touches 95 by Dec 1 00:00 UTC",
+  "sides": [
+    "Yes",
+    "No"
+  ],
+  "status": "open",
+  "fair": {
+    "p": 0.3573,
+    "lo": 0.3473,
+    "hi": 0.3716,
+    "method": "options",
+    "confidence": 0.6,
+    "singleSource": false,
+    "flags": [
+      "touch-model"
+    ],
+    "sources": [
+      {
+        "name": "deribit",
+        "p": 0.3573,
+        "weight": 1,
+        "ageS": 11
+      }
+    ],
+    "updated": "2026-11-05T10:57:22.838Z",
+    "ageS": 6
+  },
+  "book": {
+    "bid": 0.3998,
+    "ask": 0.4058,
+    "mid": 0.4028
+  },
+  "edge": {
+    "refUsd": 100,
+    "buy0": -5.11,
+    "buy1": 3.96,
+    "sell0": 3.95,
+    "sell1": -5.07
+  },
+  "url": "https://usehyperodds.com/m/22091"
+}

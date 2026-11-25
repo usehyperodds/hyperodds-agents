@@ -11,10 +11,11 @@ and Hyperodds' public forecast record. Free, with no Hyperodds key to set up.
 | `@hyperodds/langchain`     | LangChain.js 1.x, LangGraph            | `npm i @hyperodds/langchain @langchain/core zod`    |
 | `@hyperodds/openai-agents` | OpenAI Agents SDK for TypeScript 0.21+ | `npm i @hyperodds/openai-agents @openai/agents zod` |
 | `@hyperodds/client`        | Any TypeScript or JavaScript           | `npm i @hyperodds/client zod`                       |
+| `n8n-nodes-hyperodds`      | n8n, self-hosted (tested on 2.46.3)    | Settings → Community nodes → `n8n-nodes-hyperodds`  |
 
-Each package calls the hosted Hyperodds MCP server at `api.usehyperodds.com/mcp` over HTTPS, where
-the tools and their data run. The tools are read-only: none can trade, access an account or enter a
-forecast. The packages need Node.js 22 or later and Zod 4.
+The four `@hyperodds` packages call the hosted Hyperodds MCP server at `api.usehyperodds.com/mcp`
+over HTTPS, where the tools and their data run. The tools are read-only: none can trade, access an
+account or enter a forecast. They need Node.js 22 or later and Zod 4. For workflows, see [n8n](#n8n).
 
 ## Quick start
 
@@ -172,14 +173,28 @@ carries `limit`, with `limit`, `used` and `resetAt`. Every request also counts t
 of 5 a second, with bursts of up to 30. When the server asks for a wait of 5 seconds or less, the
 client waits and tries once more; it does the same after a dropped connection or a failed gateway.
 
+## n8n
+
+[`n8n-nodes-hyperodds`](packages/n8n-nodes-hyperodds) brings the same markets to n8n workflows:
+1. In n8n, open **Settings → Community nodes → Install** and enter `n8n-nodes-hyperodds`.
+2. Add **Hyperodds** to read markets, such as Get Top Edges, or **Hyperodds Trigger** to start a
+   workflow from an alert you send to the Webhook channel on the Hyperodds Alerts page.
+
+The reads need no account or key. The trigger checks each request's signature against your signing
+secret before the workflow starts. The package's [README](packages/n8n-nodes-hyperodds/README.md)
+covers setup, the payload and the signature check, and [examples/n8n](examples/n8n) has two
+workflows to import.
+
 ## Development
 
 ```sh
 npm ci
+npm ci --prefix packages/n8n-nodes-hyperodds
 npm test
 ```
 
-`npm run lint` and `npm run typecheck` run the other checks CI runs. See
+The second install is for the n8n nodes, which keep their own lock file; the demo and the examples
+need only the first. `npm run lint` and `npm run typecheck` run the other checks CI runs. See
 [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ## Security

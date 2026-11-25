@@ -1,0 +1,43 @@
+{
+  "name": "Hyperodds alert to n8n",
+  "nodes": [
+    {
+      "id": "8b0f3c1e-1a2b-4c3d-8e4f-000000000011",
+      "name": "Hyperodds Trigger",
+      "type": "n8n-nodes-hyperodds.hyperoddsTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": { "events": ["*"], "options": {} }
+    },
+    {
+      "id": "8b0f3c1e-1a2b-4c3d-8e4f-000000000012",
+      "name": "Format the alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [260, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "options": {},
+        "assignments": {
+          "assignments": [
+            { "id": "a1", "name": "event", "value": "={{ $json.type }}", "type": "string" },
+            { "id": "a2", "name": "headline", "value": "={{ $json.title }}", "type": "string" },
+            { "id": "a3", "name": "summary", "value": "={{ $json.text }}", "type": "string" },
+            {
+              "id": "a4",
+              "name": "market",
+              "value": "={{ $json.market ? $json.market.url : null }}",
+              "type": "string"
+            },
+            { "id": "a5", "name": "delivery", "value": "={{ $json.id }}", "type": "string" }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Hyperodds Trigger": { "main": [[{ "node": "Format the alert", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

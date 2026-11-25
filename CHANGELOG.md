@@ -2,7 +2,8 @@
 
 Notable changes to `@hyperodds/client`, `@hyperodds/ai-sdk`, `@hyperodds/langchain` and
 `@hyperodds/openai-agents`, newest first. The four share one version, which follows
-[Semantic Versioning](https://semver.org/).
+[Semantic Versioning](https://semver.org/). `n8n-nodes-hyperodds` has its own version and
+[changelog](packages/n8n-nodes-hyperodds/CHANGELOG.md).
 
 ## [0.1.0] - 2026-11-25
 

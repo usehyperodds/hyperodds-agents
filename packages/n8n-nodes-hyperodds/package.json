@@ -1,0 +1,65 @@
+{
+  "name": "n8n-nodes-hyperodds",
+  "version": "0.1.0",
+  "description": "Hyperodds nodes for n8n: read Hyperliquid HIP-4 outcome markets from every deployer, and start a workflow from a signed Hyperodds alert.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "hyperodds",
+    "hyperliquid",
+    "hip-4",
+    "outcome-markets",
+    "prediction-markets",
+    "webhook"
+  ],
+  "homepage": "https://github.com/usehyperodds/hyperodds-agents/tree/main/packages/n8n-nodes-hyperodds#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usehyperodds/hyperodds-agents.git",
+    "directory": "packages/n8n-nodes-hyperodds"
+  },
+  "bugs": {
+    "url": "https://github.com/usehyperodds/hyperodds-agents/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Hyperodds",
+    "email": "dev@usehyperodds.com",
+    "url": "https://usehyperodds.com"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"test/*.test.js\"",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/HyperoddsWebhookApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/HyperoddsTrigger/HyperoddsTrigger.node.js",
+      "dist/nodes/Hyperodds/Hyperodds.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.55.3",
+    "@types/node": "22.20.5",
+    "eslint": "9.29.0",
+    "n8n-workflow": "2.46.3",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

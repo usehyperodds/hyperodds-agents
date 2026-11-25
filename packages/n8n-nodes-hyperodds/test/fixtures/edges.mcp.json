@@ -1,0 +1,78 @@
+{
+  "total": 291,
+  "count": 3,
+  "markets": [
+    {
+      "outcome": 23762,
+      "title": "HYPE above 86.2 at Nov 6 21:00 UTC",
+      "deployer": "txyz",
+      "deployerName": "trade[XYZ]",
+      "category": "crypto",
+      "status": "open",
+      "sides": [
+        "Yes",
+        "No"
+      ],
+      "bid": 0.2,
+      "ask": 0.21932,
+      "fair": 0.1299,
+      "fairConfidence": 0.9,
+      "singleSource": false,
+      "edgePts": 6.61,
+      "edgeSide": 1,
+      "volume24h": 5164,
+      "settles": "2026-11-06T21:00:00.000Z",
+      "listed": "2026-11-02T21:13:32.140Z",
+      "clusterId": null,
+      "url": "https://usehyperodds.com/m/23762"
+    },
+    {
+      "outcome": 22091,
+      "title": "HYPE touches 95 by Dec 1 00:00 UTC",
+      "deployer": "out",
+      "deployerName": "Outcome",
+      "category": "crypto",
+      "status": "open",
+      "sides": [
+        "Yes",
+        "No"
+      ],
+      "bid": 0.3998,
+      "ask": 0.4058,
+      "fair": 0.3573,
+      "fairConfidence": 0.6,
+      "singleSource": false,
+      "edgePts": 3.96,
+      "edgeSide": 1,
+      "volume24h": 13820,
+      "settles": "2026-12-01T00:00:00.000Z",
+      "listed": "2026-10-31T21:22:52.361Z",
+      "clusterId": null,
+      "url": "https://usehyperodds.com/m/22091"
+    },
+    {
+      "outcome": 22090,
+      "title": "HYPE touches 90 by Dec 1 00:00 UTC",
+      "deployer": "out",
+      "deployerName": "Outcome",
+      "category": "crypto",
+      "status": "open",
+      "sides": [
+        "Yes",
+        "No"
+      ],
+      "bid": 0.60278,
+      "ask": 0.62756,
+      "fair": 0.5622,
+      "fairConfidence": 0.6,
+      "singleSource": false,
+      "edgePts": 3.88,
+      "edgeSide": 1,
+      "volume24h": 12001,
+      "settles": "2026-12-01T00:00:00.000Z",
+      "listed": "2026-10-31T21:19:50.439Z",
+      "clusterId": null,
+      "url": "https://usehyperodds.com/m/22090"
+    }
+  ]
+}

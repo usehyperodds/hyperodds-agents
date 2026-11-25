@@ -1,0 +1,148 @@
+{
+  "id": "ipocap-anthropic-1500000000000-20270101-1hpwz3o",
+  "title": "Anthropic first-day market cap above $1,500B",
+  "kind": "ipo_market_cap",
+  "anchor": 8573,
+  "members": [
+    {
+      "outcome": 8573,
+      "title": "Anthropic first-day market cap above $1,500B",
+      "deployer": "out",
+      "deployerName": "Outcome",
+      "grade": "SAME",
+      "flipped": false,
+      "diffs": [],
+      "bid": 0.76142,
+      "ask": 0.76647,
+      "fair": null,
+      "volume24h": 26242,
+      "url": "https://usehyperodds.com/m/8573"
+    },
+    {
+      "outcome": 7362,
+      "title": "Anthropic first-day market cap above $1,500B",
+      "deployer": "txyz",
+      "deployerName": "trade[XYZ]",
+      "grade": "SAME",
+      "flipped": false,
+      "diffs": [],
+      "bid": 0.75,
+      "ask": 0.85,
+      "fair": null,
+      "volume24h": 0,
+      "url": "https://usehyperodds.com/m/7362"
+    }
+  ],
+  "merged": {
+    "bids": [
+      {
+        "px": 0.76142,
+        "sz": 132,
+        "outcome": 8573
+      },
+      {
+        "px": 0.7614,
+        "sz": 35,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76137,
+        "sz": 26,
+        "outcome": 8573
+      },
+      {
+        "px": 0.75959,
+        "sz": 63,
+        "outcome": 8573
+      },
+      {
+        "px": 0.75,
+        "sz": 6,
+        "outcome": 7362
+      }
+    ],
+    "asks": [
+      {
+        "px": 0.76647,
+        "sz": 115,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76648,
+        "sz": 51,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76701,
+        "sz": 69,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76819,
+        "sz": 93,
+        "outcome": 8573
+      },
+      {
+        "px": 0.795,
+        "sz": 435,
+        "outcome": 8573
+      }
+    ]
+  },
+  "mergedWithClose": {
+    "bids": [
+      {
+        "px": 0.76142,
+        "sz": 132,
+        "outcome": 8573
+      },
+      {
+        "px": 0.7614,
+        "sz": 35,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76137,
+        "sz": 26,
+        "outcome": 8573
+      },
+      {
+        "px": 0.75959,
+        "sz": 63,
+        "outcome": 8573
+      },
+      {
+        "px": 0.75,
+        "sz": 6,
+        "outcome": 7362
+      }
+    ],
+    "asks": [
+      {
+        "px": 0.76647,
+        "sz": 115,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76648,
+        "sz": 51,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76701,
+        "sz": 69,
+        "outcome": 8573
+      },
+      {
+        "px": 0.76819,
+        "sz": 93,
+        "outcome": 8573
+      },
+      {
+        "px": 0.795,
+        "sz": 435,
+        "outcome": 8573
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "HIP-4 edges of 0.5 points or more on lines Hyperodds trusts",
+  "nodes": [
+    {
+      "id": "8b0f3c1e-1a2b-4c3d-8e4f-000000000001",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "8b0f3c1e-1a2b-4c3d-8e4f-000000000002",
+      "name": "Trusted edges",
+      "type": "n8n-nodes-hyperodds.hyperodds",
+      "typeVersion": 1,
+      "position": [260, 0],
+      "parameters": {
+        "resource": "market",
+        "operation": "getEdges",
+        "limit": 5,
+        "minConfidence": 0.5,
+        "output": "simplified"
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Trusted edges",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

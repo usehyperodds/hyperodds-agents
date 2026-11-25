@@ -1,7 +1,8 @@
 # Contributing
 
-Thanks for helping. This repository holds the Hyperodds tool packages for agent frameworks:
-`@hyperodds/client`, `@hyperodds/ai-sdk`, `@hyperodds/langchain` and `@hyperodds/openai-agents`.
+Thanks for helping. This repository holds the Hyperodds tool packages for agent frameworks,
+`@hyperodds/client`, `@hyperodds/ai-sdk`, `@hyperodds/langchain` and `@hyperodds/openai-agents`,
+and the Hyperodds nodes for n8n, `n8n-nodes-hyperodds`.
 - A bug in a package, a framework version it does not work with, or a gap in these docs: open an
   issue or a pull request here.
 - A tool's output, a missing field or a new tool: open a
@@ -16,8 +17,13 @@ You need Node.js 22.18 or later, which runs the TypeScript examples and the demo
 git clone https://github.com/usehyperodds/hyperodds-agents.git
 cd hyperodds-agents
 npm ci
+npm ci --prefix packages/n8n-nodes-hyperodds
 npm test
 ```
+
+`packages/n8n-nodes-hyperodds` sits outside the npm workspaces with its own lock file: n8n's node
+CLI builds and lints it with TypeScript 5 and ESLint, while the other packages use TypeScript 7.
+The root scripts run its checks too.
 
 `npm test` builds every package and runs the tests with Node's own test runner. The tests use a
 stand-in for the hosted server, and the framework tests run real agent loops (`generateText`,
@@ -35,6 +41,11 @@ change how a package calls a tool or reads its result.
 - `packages/ai-sdk`, `packages/langchain`, `packages/openai-agents`: one thin wrapper each.
 - `examples`: one script per framework that asks a model a question.
 - `scripts/demo.ts`: the demo.
+- `packages/n8n-nodes-hyperodds`: the n8n nodes, laid out as n8n's node CLI expects (`nodes/`,
+  `credentials/`, `icons/`). `npm run lint` there runs n8n's community node rules; keep its
+  `eslint.config.mjs` as n8n ships it, since n8n's verification checks it. `scripts/local-n8n.sh`
+  runs a local n8n with the package installed, and `scripts/send-test-alert.mjs` signs a webhook
+  delivery the way Hyperodds does.
 
 The catalog tests compare the tool inputs with `packages/client/test/fixtures/tools-list.json`, the
 hosted server's `tools/list`. When the server changes a tool, refresh that file and the catalog
@@ -53,7 +64,11 @@ By contributing, you agree to release your work under the [MIT license](LICENSE)
 
 ## Releases
 
-The four packages share one version. Maintainers release from `main`: bump `version` in each
+`n8n-nodes-hyperodds` is versioned on its own: bump `version` in its `package.json`, add the entry to
+its [CHANGELOG.md](packages/n8n-nodes-hyperodds/CHANGELOG.md) and push an `n8n-vX.Y.Z` tag. The
+`publish n8n nodes` workflow publishes it with npm provenance, which n8n requires for verification.
+
+The four `@hyperodds` packages share one version. Maintainers release from `main`: bump `version` in each
 package's `package.json`, the `@hyperodds/client` dependency of the other three and
 `packages/client/src/version.ts`, add the entry
 to [CHANGELOG.md](CHANGELOG.md) and push a `vX.Y.Z` tag. The release workflow checks the tag

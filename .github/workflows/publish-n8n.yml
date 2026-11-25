@@ -1,0 +1,55 @@
+# Publishes n8n-nodes-hyperodds to npm with a provenance statement when an n8n-vX.Y.Z tag is pushed.
+# n8n verifies community nodes only when they are published from GitHub Actions with provenance:
+# https://docs.n8n.io/connect/create-nodes/deploy-your-node/submit-community-nodes
+#
+# One-time setup, either:
+# - npm trusted publishing (preferred): on npmjs.com, n8n-nodes-hyperodds → Settings → Trusted
+#   Publisher → GitHub Actions, owner usehyperodds, repository hyperodds-agents, workflow
+#   publish-n8n.yml. Leave NPM_TOKEN unset.
+# - or an NPM_TOKEN repository secret: a granular token that can publish n8n-nodes-hyperodds.
+#   The first publish of a new package name needs this, as trusted publishing is set per package.
+name: publish n8n nodes
+
+on:
+  push:
+    tags: ["n8n-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: publish n8n-nodes-hyperodds to npm with provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/n8n-nodes-hyperodds
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: packages/n8n-nodes-hyperodds/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build && npm test
+      - name: the tag matches the package
+        run: test "n8n-v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      # In GitHub Actions, n8n-node release lints, builds and runs npm publish with provenance.
+      - name: publish
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"; fi
+          npm run release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: GitHub release from the changelog entry
+        run: |
+          awk '/^## \[/{n++} n==1' CHANGELOG.md | tail -n +2 > notes.md
+          gh release create "$GITHUB_REF_NAME" --title "n8n-nodes-hyperodds $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+        env:
+          GH_TOKEN: ${{ github.token }}

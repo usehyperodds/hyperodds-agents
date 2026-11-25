@@ -13,10 +13,11 @@
   },
   "scripts": {
     "build": "npm run build --workspaces",
-    "typecheck": "npm run build && tsc -p tsconfig.json",
-    "lint": "biome check .",
+    "build:n8n": "npm --prefix packages/n8n-nodes-hyperodds run build",
+    "typecheck": "npm run build && tsc -p tsconfig.json && npm --prefix packages/n8n-nodes-hyperodds run typecheck",
+    "lint": "biome check . && npm --prefix packages/n8n-nodes-hyperodds run lint",
     "format": "biome check --write .",
-    "test": "npm run build && node --test \"packages/*/test/*.test.js\"",
+    "test": "npm run build && npm run build:n8n && node --test \"packages/*/test/*.test.js\"",
     "demo": "npm run build && node scripts/demo.ts"
   },
   "devDependencies": {

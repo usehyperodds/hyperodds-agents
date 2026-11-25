@@ -1,0 +1,226 @@
+{
+  "result": {
+    "data": [
+      {
+        "outcome": 23762,
+        "questionId": null,
+        "role": "standalone",
+        "deployer": "txyz",
+        "deployerName": "trade[XYZ]",
+        "template": "binaryPrice",
+        "title": "HYPE above 86.2 at Nov 6 21:00 UTC",
+        "label": "HYPE above 86.2 at Nov 6 21:00 UTC",
+        "questionTitle": null,
+        "sideLabels": [
+          "Yes",
+          "No"
+        ],
+        "category": "crypto",
+        "subcategory": "HYPE",
+        "eventTime": 1793998800000,
+        "deadline": 1793998800000,
+        "listedAt": 1793654012140,
+        "status": "open",
+        "settledSide": null,
+        "bid": 0.2,
+        "ask": 0.21932,
+        "mid": 0.20966,
+        "spread": 0.01932,
+        "depthUsd": {
+          "bid": 1640.29483,
+          "ask": 2105.05121
+        },
+        "volume24h": 5164,
+        "trades24h": 38,
+        "lastPx": 0.241,
+        "change24h": -0.35307,
+        "fair": {
+          "p": 0.129918,
+          "lo": 0.118155,
+          "hi": 0.141203,
+          "method": "options",
+          "singleSource": false,
+          "confidence": 0.9,
+          "flags": [],
+          "ts": 1793876242838
+        },
+        "edge": {
+          "refUsd": 100,
+          "buy0": -8.949301,
+          "buy1": 6.607688,
+          "sell0": 6.397166,
+          "sell1": -9.012016,
+          "best": {
+            "side": 1,
+            "action": "buy",
+            "pts": 6.607688
+          }
+        },
+        "clusterId": null,
+        "clusterSize": 0,
+        "matchGrade": null,
+        "settlementRisk": {
+          "settledBy": "deployer",
+          "deployer": "trade[XYZ]",
+          "stakeHype": 501826.60601896,
+          "unstakingHype": 0,
+          "pastDelays": {
+            "count": 374,
+            "medianMs": 2265580,
+            "maxMs": 154503838
+          },
+          "level": "medium",
+          "note": "Settled by trade[XYZ]'s key; 501,827 HYPE staked."
+        }
+      },
+      {
+        "outcome": 22091,
+        "questionId": null,
+        "role": "standalone",
+        "deployer": "out",
+        "deployerName": "Outcome",
+        "template": "priceTouch",
+        "title": "HYPE touches 95 by Dec 1 00:00 UTC",
+        "label": "HYPE touches 95 by Dec 1 00:00 UTC",
+        "questionTitle": null,
+        "sideLabels": [
+          "Yes",
+          "No"
+        ],
+        "category": "crypto",
+        "subcategory": "HYPE",
+        "eventTime": null,
+        "deadline": 1796083200000,
+        "listedAt": 1793481772361,
+        "status": "open",
+        "settledSide": null,
+        "bid": 0.3998,
+        "ask": 0.4058,
+        "mid": 0.4028,
+        "spread": 0.006,
+        "depthUsd": {
+          "bid": 2145.38847,
+          "ask": 1303.89399
+        },
+        "volume24h": 13820,
+        "trades24h": 106,
+        "lastPx": 0.41021,
+        "change24h": -0.2172,
+        "fair": {
+          "p": 0.35731,
+          "lo": 0.347327,
+          "hi": 0.371608,
+          "method": "options",
+          "singleSource": false,
+          "confidence": 0.6,
+          "flags": [
+            "touch-model"
+          ],
+          "ts": 1793876242838
+        },
+        "edge": {
+          "refUsd": 100,
+          "buy0": -5.111578,
+          "buy1": 3.958917,
+          "sell0": 3.947472,
+          "sell1": -5.070572,
+          "best": {
+            "side": 1,
+            "action": "buy",
+            "pts": 3.958917
+          }
+        },
+        "clusterId": null,
+        "clusterSize": 0,
+        "matchGrade": null,
+        "settlementRisk": {
+          "settledBy": "deployer",
+          "deployer": "Outcome",
+          "stakeHype": 508320.68819593,
+          "unstakingHype": 0,
+          "pastDelays": {
+            "count": 4357,
+            "medianMs": 16710,
+            "maxMs": 596394370
+          },
+          "level": "medium",
+          "note": "Settled by Outcome's key; 508,321 HYPE staked."
+        }
+      },
+      {
+        "outcome": 22090,
+        "questionId": null,
+        "role": "standalone",
+        "deployer": "out",
+        "deployerName": "Outcome",
+        "template": "priceTouch",
+        "title": "HYPE touches 90 by Dec 1 00:00 UTC",
+        "label": "HYPE touches 90 by Dec 1 00:00 UTC",
+        "questionTitle": null,
+        "sideLabels": [
+          "Yes",
+          "No"
+        ],
+        "category": "crypto",
+        "subcategory": "HYPE",
+        "eventTime": null,
+        "deadline": 1796083200000,
+        "listedAt": 1793481590439,
+        "status": "open",
+        "settledSide": null,
+        "bid": 0.60278,
+        "ask": 0.62756,
+        "mid": 0.61517,
+        "spread": 0.02478,
+        "depthUsd": {
+          "bid": 2125.0287,
+          "ask": 2083.84816
+        },
+        "volume24h": 12001,
+        "trades24h": 126,
+        "lastPx": 0.63361,
+        "change24h": -0.231125,
+        "fair": {
+          "p": 0.562152,
+          "lo": 0.556599,
+          "hi": 0.569432,
+          "method": "options",
+          "singleSource": false,
+          "confidence": 0.6,
+          "flags": [
+            "touch-model"
+          ],
+          "ts": 1793876242838
+        },
+        "edge": {
+          "refUsd": 100,
+          "buy0": -6.619523,
+          "buy1": 3.881222,
+          "sell0": 3.950626,
+          "sell1": -6.601806,
+          "best": {
+            "side": 1,
+            "action": "buy",
+            "pts": 3.881222
+          }
+        },
+        "clusterId": null,
+        "clusterSize": 0,
+        "matchGrade": null,
+        "settlementRisk": {
+          "settledBy": "deployer",
+          "deployer": "Outcome",
+          "stakeHype": 508320.68819593,
+          "unstakingHype": 0,
+          "pastDelays": {
+            "count": 4357,
+            "medianMs": 16710,
+            "maxMs": 596394370
+          },
+          "level": "medium",
+          "note": "Settled by Outcome's key; 508,321 HYPE staked."
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,776 @@
+{
+  "result": {
+    "data": {
+      "id": "ipocap-anthropic-1500000000000-20270101-1hpwz3o",
+      "title": "Anthropic first-day market cap above $1,500B",
+      "kind": "ipo_market_cap",
+      "anchor": 8573,
+      "members": [
+        {
+          "summary": {
+            "outcome": 8573,
+            "questionId": null,
+            "role": "standalone",
+            "deployer": "out",
+            "deployerName": "Outcome",
+            "template": "companyIpoFirstDayMarketCap",
+            "title": "Anthropic first-day market cap above $1,500B",
+            "label": "Anthropic first-day market cap above $1,500B",
+            "questionTitle": null,
+            "sideLabels": [
+              "Yes",
+              "No"
+            ],
+            "category": "ipo",
+            "subcategory": "Anthropic",
+            "eventTime": null,
+            "deadline": 1798761600000,
+            "listedAt": null,
+            "status": "open",
+            "settledSide": null,
+            "bid": 0.76142,
+            "ask": 0.76647,
+            "mid": 0.763945,
+            "spread": 0.00505,
+            "depthUsd": {
+              "bid": 554.57728,
+              "ask": 641.47989
+            },
+            "volume24h": 26242,
+            "trades24h": 410,
+            "lastPx": 0.767,
+            "change24h": -0.027985,
+            "fair": null,
+            "edge": null,
+            "clusterId": "ipocap-anthropic-1500000000000-20270101-1hpwz3o",
+            "clusterSize": 2,
+            "matchGrade": null,
+            "settlementRisk": {
+              "settledBy": "deployer",
+              "deployer": "Outcome",
+              "stakeHype": 508320.68819593,
+              "unstakingHype": 0,
+              "pastDelays": {
+                "count": 4357,
+                "medianMs": 16710,
+                "maxMs": 596394370
+              },
+              "level": "medium",
+              "note": "Settled by Outcome's key; 508,321 HYPE staked."
+            }
+          },
+          "grade": "SAME",
+          "flipped": false,
+          "diffs": []
+        },
+        {
+          "summary": {
+            "outcome": 7362,
+            "questionId": null,
+            "role": "standalone",
+            "deployer": "txyz",
+            "deployerName": "trade[XYZ]",
+            "template": "companyIpoFirstDayMarketCap",
+            "title": "Anthropic first-day market cap above $1,500B",
+            "label": "Anthropic first-day market cap above $1,500B",
+            "questionTitle": null,
+            "sideLabels": [
+              "Yes",
+              "No"
+            ],
+            "category": "ipo",
+            "subcategory": "Anthropic",
+            "eventTime": null,
+            "deadline": 1798761540000,
+            "listedAt": null,
+            "status": "open",
+            "settledSide": null,
+            "bid": 0.75,
+            "ask": 0.85,
+            "mid": 0.8,
+            "spread": 0.1,
+            "depthUsd": {
+              "bid": 4.5,
+              "ask": 9.35
+            },
+            "volume24h": 0,
+            "trades24h": 0,
+            "lastPx": null,
+            "change24h": 0.05,
+            "fair": null,
+            "edge": null,
+            "clusterId": "ipocap-anthropic-1500000000000-20270101-1hpwz3o",
+            "clusterSize": 2,
+            "matchGrade": null,
+            "settlementRisk": {
+              "settledBy": "deployer",
+              "deployer": "trade[XYZ]",
+              "stakeHype": 501826.60601896,
+              "unstakingHype": 0,
+              "pastDelays": {
+                "count": 374,
+                "medianMs": 2265580,
+                "maxMs": 154503838
+              },
+              "level": "medium",
+              "note": "Settled by trade[XYZ]'s key; 501,827 HYPE staked."
+            }
+          },
+          "grade": "SAME",
+          "flipped": false,
+          "diffs": []
+        }
+      ],
+      "mergedBook": {
+        "bids": [
+          {
+            "px": 0.76142,
+            "sz": 132,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.7614,
+            "sz": 35,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76137,
+            "sz": 26,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.75959,
+            "sz": 63,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.75,
+            "sz": 6,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.742,
+            "sz": 431,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.72671,
+            "sz": 55,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.69671,
+            "sz": 57,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.67846,
+            "sz": 43,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.66671,
+            "sz": 59,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.62671,
+            "sz": 63,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.62,
+            "sz": 300,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.57,
+            "sz": 1754,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.50879,
+            "sz": 3040,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.5,
+            "sz": 5000,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.5,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.31,
+            "sz": 6451,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.12,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.01,
+            "sz": 1008,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00334,
+            "sz": 4000,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00334,
+            "sz": 2096,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00333,
+            "sz": 1505,
+            "n": 5,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00333,
+            "sz": 1505,
+            "n": 5,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00025,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00025,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00001,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00001,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:7362"
+          }
+        ],
+        "asks": [
+          {
+            "px": 0.76647,
+            "sz": 115,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76648,
+            "sz": 51,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76701,
+            "sz": 69,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76819,
+            "sz": 93,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.795,
+            "sz": 435,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.801,
+            "sz": 55,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81755,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81844,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81944,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81946,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81947,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81955,
+            "sz": 244,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.82116,
+            "sz": 101,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.82307,
+            "sz": 28,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83,
+            "sz": 29,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83735,
+            "sz": 68,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83841,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.84841,
+            "sz": 19,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.85,
+            "sz": 11,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.86,
+            "sz": 21,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.87,
+            "sz": 23,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.95,
+            "sz": 200,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99667,
+            "sz": 1600,
+            "n": 5,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99974,
+            "sz": 8660,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99975,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99999,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:7362"
+          }
+        ],
+        "ts": 1793876242819
+      },
+      "mergedBookWithClose": {
+        "bids": [
+          {
+            "px": 0.76142,
+            "sz": 132,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.7614,
+            "sz": 35,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76137,
+            "sz": 26,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.75959,
+            "sz": 63,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.75,
+            "sz": 6,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.742,
+            "sz": 431,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.72671,
+            "sz": 55,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.69671,
+            "sz": 57,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.67846,
+            "sz": 43,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.66671,
+            "sz": 59,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.62671,
+            "sz": 63,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.62,
+            "sz": 300,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.57,
+            "sz": 1754,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.50879,
+            "sz": 3040,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.5,
+            "sz": 5000,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.5,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.31,
+            "sz": 6451,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.12,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.01,
+            "sz": 1008,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00334,
+            "sz": 4000,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00334,
+            "sz": 2096,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00333,
+            "sz": 1505,
+            "n": 5,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00333,
+            "sz": 1505,
+            "n": 5,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00025,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00025,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.00001,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.00001,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:7362"
+          }
+        ],
+        "asks": [
+          {
+            "px": 0.76647,
+            "sz": 115,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76648,
+            "sz": 51,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76701,
+            "sz": 69,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.76819,
+            "sz": 93,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.795,
+            "sz": 435,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.801,
+            "sz": 55,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81755,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81844,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81944,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81946,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81947,
+            "sz": 27,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.81955,
+            "sz": 244,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.82116,
+            "sz": 101,
+            "n": 2,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.82307,
+            "sz": 28,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83,
+            "sz": 29,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83735,
+            "sz": 68,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.83841,
+            "sz": 18,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.84841,
+            "sz": 19,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.85,
+            "sz": 11,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.86,
+            "sz": 21,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.87,
+            "sz": 23,
+            "n": 1,
+            "source": "hl:8573"
+          },
+          {
+            "px": 0.95,
+            "sz": 200,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99667,
+            "sz": 1600,
+            "n": 5,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99974,
+            "sz": 8660,
+            "n": 1,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99975,
+            "sz": 24000,
+            "n": 6,
+            "source": "hl:7362"
+          },
+          {
+            "px": 0.99999,
+            "sz": 100000,
+            "n": 1,
+            "source": "hl:7362"
+          }
+        ],
+        "ts": 1793876242819
+      }
+    }
+  }
+}

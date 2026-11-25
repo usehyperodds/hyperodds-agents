@@ -1,0 +1,13 @@
+{
+  "node": "n8n-nodes-hyperodds.hyperodds",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Finance & Accounting", "Analytics"],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/usehyperodds/hyperodds-agents/tree/main/packages/n8n-nodes-hyperodds#readme"
+      }
+    ]
+  }
+}

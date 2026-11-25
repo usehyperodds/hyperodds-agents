@@ -27,8 +27,15 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/n8n-nodes-hyperodds/package-lock.json
       - run: npm ci
+      - run: npm ci
+        working-directory: packages/n8n-nodes-hyperodds
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm pack --dry-run --workspaces
+      - run: npm pack --dry-run
+        working-directory: packages/n8n-nodes-hyperodds
