@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@ai-sdk/openai": "4.0.121",
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.6.8",
     "@langchain/core": "1.4.2",
     "@langchain/openai": "1.8.4",
     "@openai/agents": "0.22.0",
